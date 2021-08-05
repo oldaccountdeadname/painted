@@ -40,7 +40,7 @@ commands over IPC, the same commands are available. painted does not
 come with a client, and in the interest of simplicity and scripting, you
 should use netcat or similar to write to the socket.
 
-### [TODO]{.todo .TODO} In Polybar {#in-polybar}
+### [TODO] In Polybar
 
 ### Somewhere else?
 
