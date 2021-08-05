@@ -45,8 +45,8 @@ invoke it in a bar definition:
 [module/painted]
 type = custom/script
 exec = "painted --input /tmp/painted.in"
-tail = true # don't wait for painted to finish before displaying content.
-on-click = "echo 'clear' >> /tmp/painted.in"
+tail = true
+click-left = "echo 'clear' >> /tmp/painted.in"
 ```
 
 ### Somewhere else?
