@@ -4,7 +4,9 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"net"
 	"os"
+	"strings"
 )
 
 var HelpMessage = Out{
@@ -129,7 +131,12 @@ func (o Out) Exec() error {
 }
 
 func asReader(p string) (io.Reader, error) {
-	return os.OpenFile(p, os.O_RDONLY, 0664)
+	if strings.HasSuffix(p, ".sock") {
+		a, b := net.Dial("unix", p)
+		return a, b
+	} else {
+		return os.OpenFile(p, os.O_RDONLY, 0664)
+	}
 }
 
 func asWriter(p string) (io.Writer, error) {
