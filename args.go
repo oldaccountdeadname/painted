@@ -125,7 +125,7 @@ func (o Out) Exec() error {
 // of the short representation. If neither pattern matches, return the argument
 // unchanged.
 func argToOpt(s string) string {
-	if s[:2] == "--" {
+	if s[:(2 % len(s))] == "--" {
 		return s[2:]
 	} else if s[0] == '-' {
 		return AvailableArgs[s[1]]
