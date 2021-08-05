@@ -22,7 +22,19 @@ type Model struct {
 // interface that org.freedesktop.Notifications is expecting.
 type Server struct {}
 
-// Connect. If an error occurs, m.Bus is set to nil.
+// This is an in-memory representation of the notification for manipulation onto
+// IO. It is *not* a direct mapping of the (notification
+// spec)[https://developer-old.gnome.org/notification-spec/] and contains only
+// the information that is used.
+type Notification struct {
+	OriginApp string
+	Summary string
+	Timeout uint32
+	Id uint32
+	ReplaceId *uint32
+}
+
+// Connect to the bus. If an error occurs, m.Bus is set to nil.
 func (m *Model) connect() error { 
 	bus, err := dbus.ConnectSessionBus()
 	m.Bus = bus
