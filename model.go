@@ -4,14 +4,14 @@ import (
 	"bufio"
 	"errors"
 	"fmt"
-	"os"
+	"io"
 
 	"github.com/godbus/dbus/v5"
 )
 
 type Model struct {
-	inputF     os.File
-	OutputFile os.File
+	inputF     io.Reader
+	OutputFile io.Writer
 	Bus        *dbus.Conn
 }
 
@@ -83,7 +83,7 @@ func (m *Model) RegisterIface(serv *Server) error {
 }
 
 func (m *Model) CmdLoop() {
-	scanner := bufio.NewScanner(&m.inputF)
+	scanner := bufio.NewScanner(m.inputF)
 	for scanner.Scan() {
 		cmd := scanner.Text()
 		// TODO *way* better matching logic
@@ -92,11 +92,11 @@ func (m *Model) CmdLoop() {
 		case "exit":
 			return
 		case "clear":
-			m.OutputFile.WriteString("\n")
+			m.OutputFile.Write([]byte{'\n'})
 		default:
-			m.OutputFile.WriteString(
+			m.OutputFile.Write([]byte(
 				fmt.Sprintf("%s not understood.\n", cmd),
-			)
+			))
 		}
 	}
 }
@@ -164,7 +164,7 @@ func (s *Server) Notify(
 	s.nextId += 1
 
 	// TODO pretty formattting
-	s.Model.OutputFile.WriteString(fmt.Sprintf("%+v\n", notif))
+	s.Model.OutputFile.Write([]byte(fmt.Sprintf("%+v\n", notif)))
 
 	return notif.Id, nil
 }
