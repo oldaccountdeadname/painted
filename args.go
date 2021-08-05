@@ -15,11 +15,19 @@ If a path ends in .sock, it is interpreted as a UNIX socket.
 `,
 }
 
-var AvailableArgs = map[byte]string{
-	'h': "help",
-	'i': "input",
-	'o': "output",
-}
+var (
+	AvailableArgs = map[byte]string{
+		'h': "help",
+		'i': "input",
+		'o': "output",
+	}
+
+	ArgRequiresVal = map[string]bool{
+		"help": false,
+		"input": true,
+		"output": true,
+	}
+)
 
 type Exec interface {
 	Exec() error
@@ -51,18 +59,30 @@ func (a *Args) Apply(k *string, v *string) {
 	}
 }
 
-// Initialize `self` with a list of arguments.
-func (a *Args) Fill(args_s []string) {
+// Initialize `self` with a list of arguments. Errors returned are fatal.
+func (a *Args) Fill(args_s []string) error {
 	for i := 0; i < len(args_s); i++ {
-		var next string
+		var val string
+		key := arg_to_opt(args_s[i])
 
-		if i+1 < len(args_s) {
-			next = arg_to_opt(args_s[i+1])
+		if ArgRequiresVal[key] {
+			i += 1
+			if i >= len(args_s) {
+				return errors.New(
+					fmt.Sprintf(
+						"Arg %s requires value.",
+						key,
+					),
+				)
+			}
+			
+			val = arg_to_opt(args_s[i])
 		}
-
-		val := arg_to_opt(args_s[i])
-		a.Apply(&val, &next)
+		
+		a.Apply(&key, &val)
 	}
+
+	return nil
 }
 
 func (a *Args) Make() (Exec, error) {

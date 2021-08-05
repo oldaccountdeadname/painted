@@ -167,7 +167,9 @@ func main() {
 		"/dev/stdout",
 	}
 
-	args.Fill(os.Args[1:])
+	if err := args.Fill(os.Args[1:]); err != nil {
+		panic(err)
+	}
 
 	action, err := args.Make()
 	if err != nil {
