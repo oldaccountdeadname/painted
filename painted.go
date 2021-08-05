@@ -13,16 +13,18 @@ var (
 )
 
 type Model struct {
-	inputF  os.File
-	outputF os.File
-	Bus     *dbus.Conn
+	inputF     os.File
+	outputF    os.File
+	Bus        *dbus.Conn
+	WriteQueue *chan string
 }
 
 // This structure implements dbus' org.freedesktop.Notifications interface and
 // encapsulates state. It's useful as an object to be exported onto the session
 // bus at /org/freedesktop/Notifications.
 type Server struct {
-	nextId uint32
+	nextId     uint32
+	WriteQueue *chan string
 }
 
 // This is an in-memory representation of the notification for manipulation onto
@@ -56,7 +58,7 @@ func (m *Model) takeName() error {
 
 	if reply != dbus.RequestNameReplyPrimaryOwner {
 		return errors.New(
-			"unable to become primary owner of org.freedesktop.Notifications.",
+`Can't take org.freedesktop.Notifications. Is another notif daemon running?`,
 		)
 	}
 
@@ -99,14 +101,20 @@ func (m Model) Exec() error {
 		defer m.releaseName()
 	}
 
+	if m.WriteQueue == nil {
+		ch := make(chan string, 16)
+		m.WriteQueue = &ch
+	}
+
 	var serv Server
-	
+	serv.WriteQueue = m.WriteQueue
+
 	if err := m.RegisterIface(&serv); err != nil {
 		return err
 	}
 
 	for {
-
+		m.outputF.WriteString(<- *m.WriteQueue)
 	}
 
 	return nil
@@ -142,7 +150,7 @@ func (s *Server) Notify(
 
 	s.nextId += 1
 
-	fmt.Printf("%+v\n", notif)
+	*s.WriteQueue <- fmt.Sprintf("%+v\n", notif) // TODO pretty formatting
 
 	return notif.Id, nil
 }
