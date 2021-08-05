@@ -29,7 +29,6 @@ type Server struct {}
 type Notification struct {
 	OriginApp string
 	Summary string
-	Timeout uint32
 	Id uint32
 	ReplaceId *uint32
 }
@@ -130,7 +129,15 @@ func (s *Server) Notify(
 	hints map[interface{}]interface{},
 	expire_timeout int32,
 ) *dbus.Error {
-	fmt.Printf("%s\n", summary)
+	notif := Notification{
+		OriginApp: app_name,
+		Summary: summary,
+		Id: 0,
+		ReplaceId: &replaces_id,
+	}
+	
+	fmt.Printf("%+v\n", notif)
+	
 	return nil
 }
 
