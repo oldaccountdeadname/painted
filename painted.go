@@ -18,14 +18,18 @@ type Model struct {
 	Bus    *dbus.Conn
 }
 
-// We need a 'dummy' struct of sorts to export out into dbus. It provides the
-// interface that org.freedesktop.Notifications is expecting.
-type Server struct {}
+// This structure implements dbus' org.freedesktop.Notifications interface and
+// encapsulates state. It's useful as an object to be exported onto the session
+// bus at /org/freedesktop/Notifications.
+type Server struct {
+	nextId uint32
+}
 
 // This is an in-memory representation of the notification for manipulation onto
-// IO. It is *not* a direct mapping of the (notification
-// spec)[https://developer-old.gnome.org/notification-spec/] and contains only
-// the information that is used.
+// IO. It is *not* a direct mapping of the notification spec[0] and contains
+// only the information that is used by painted.
+// 
+// [0]: https://developer-old.gnome.org/notification-spec/
 type Notification struct {
 	OriginApp string
 	Summary string
@@ -128,17 +132,19 @@ func (s *Server) Notify(
 	actions []interface{},
 	hints map[interface{}]interface{},
 	expire_timeout int32,
-) *dbus.Error {
+) (uint32, *dbus.Error) {
 	notif := Notification{
 		OriginApp: app_name,
 		Summary: summary,
-		Id: 0,
+		Id: s.nextId,
 		ReplaceId: &replaces_id,
 	}
 	
+	s.nextId += 1
+	
 	fmt.Printf("%+v\n", notif)
 	
-	return nil
+	return notif.Id, nil
 }
 
 func main() {
