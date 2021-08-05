@@ -90,7 +90,9 @@ func (a *Args) Make() (Exec, error) {
 		return HelpMessage, nil
 	} else {
 		reader, r_err := os.OpenFile(a.Input, os.O_RDONLY, 0664)
-		writer, w_err := os.OpenFile(a.Output, os.O_APPEND|os.O_WRONLY, 664)
+		writer, w_err := os.OpenFile(
+			a.Output, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 664,
+		)
 
 		e_msg := ""
 		if r_err != nil {
