@@ -2,30 +2,26 @@
 plain text notification daemon
 
 ## Overview
-
-painted is a dead simple notification daemon: it reads commands from a
-file (which may be a UNIX socket for IPC or stdin for simplicity),
-notifications from dbus, and writes output to a given file (usually
-stdout). It aims to be a UNIX-ish replacement for standard notification
+painted is a dead simple notification daemon: it reads commands from a file
+(which may be a UNIX socket [not yet] for IPC or any text file (including stdin)
+for simplicity), notifications from dbus, and writes output to a given file
+(usually stdout). It aims to be a UNIX-ish replacement for standard notification
 daemons, primarily for bars.
 
-Despite the name (a rough plain text contraction of the initialism PTND,
-for Plain Text Notification Daemon), the scope of PTND is not limited to
-plain text: planned features include actions, sounds, and more. The goal
-is to achieve \'minimalism\' through an unrestrictive design that
-facilitates scripting, run-time modification, and, of course,
-completeness.
+Despite the name (a rough contraction of the initialism PTND, for Plain Text
+Notification Daemon), the scope of PTND is not limited to plain text: planned
+features include actions, sounds, and more. The goal is to achieve 'minimalism'
+through an unrestrictive design that facilitates scripting, run-time
+modification, and, of course, completeness.
 
 ## Usage
 
 ### In General
+With no other notification daemons running, run the server (with the command
+`painted`). If you send a notification with `notify-send`, you should see it
+show up in the terminal window where you've run painted.
 
-With no other notification daemons running, run the server (with the
-command `painted`{.verbatim}). If you send a notification with
-`notify-send`{.verbatim}, you\'ll see it show up in the terminal window
-where you\'ve run painted.
-
-With no arguments, painted defaults to reading input from stdin.
+With no arguments, painted defaults to reading input commands from stdin.
 Available commands (those currently implemented shown checked) are:
 
 -   [ ] help (list commands)
@@ -35,12 +31,22 @@ Available commands (those currently implemented shown checked) are:
 -   [ ] action \<N> (select the n\'th action)
 -   [ ] exit (close the server)
 
-These may be shortened to their first letter. If you\'d prefer to read
-commands over IPC, the same commands are available. painted does not
-come with a client, and in the interest of simplicity and scripting, you
-should use netcat or similar to write to the socket.
+These may be shortened to their first letter. If you'd prefer painted to read
+commands over IPC, the same commands are available (not yet). painted does not
+come with a client, and in the interest of simplicity and scripting, you should
+use netcat or similar to write to the socket.
 
-### [TODO] In Polybar
+### In Polybar
+Polybar provides the script input, where a running command's stdout will be
+displayed as text. You can define a module with the following options, and
+invoke it in a bar definition:
+
+```ini
+[module/painted]
+type = custom/script
+exec = "painted"
+tail = true # don't wait for painted to finish before displaying content.
+```
 
 ### Somewhere else?
 
