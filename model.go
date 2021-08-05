@@ -101,6 +101,11 @@ func (m *Model) CmdLoop() {
 	}
 }
 
+func (m *Model) Notify(n Notification) {
+	// TODO pretty formattting
+	m.OutputFile.Write([]byte(fmt.Sprintf("%+v\n", n)))
+}
+
 // Connect to the bus, register the interface, launch the notif loop and the
 // input loop (concurrently).
 func (m Model) Exec() error {
@@ -163,8 +168,7 @@ func (s *Server) Notify(
 
 	s.nextId += 1
 
-	// TODO pretty formattting
-	s.Model.OutputFile.Write([]byte(fmt.Sprintf("%+v\n", notif)))
+	s.Model.Notify(notif)
 
 	return notif.Id, nil
 }
