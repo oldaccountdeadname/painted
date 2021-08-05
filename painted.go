@@ -1,9 +1,9 @@
 package main
 
 import (
-	"os"
-	"fmt"
 	"errors"
+	"fmt"
+	"os"
 
 	"github.com/godbus/dbus/v5"
 )
@@ -28,17 +28,17 @@ type Server struct {
 // This is an in-memory representation of the notification for manipulation onto
 // IO. It is *not* a direct mapping of the notification spec[0] and contains
 // only the information that is used by painted.
-// 
+//
 // [0]: https://developer-old.gnome.org/notification-spec/
 type Notification struct {
 	OriginApp string
-	Summary string
-	Id uint32
+	Summary   string
+	Id        uint32
 	ReplaceId *uint32
 }
 
 // Connect to the bus. If an error occurs, m.Bus is set to nil.
-func (m *Model) connect() error { 
+func (m *Model) connect() error {
 	bus, err := dbus.ConnectSessionBus()
 	m.Bus = bus
 	return err
@@ -49,7 +49,7 @@ func (m *Model) takeName() error {
 		"org.freedesktop.Notifications",
 		dbus.NameFlagReplaceExisting,
 	)
-	
+
 	if err != nil {
 		return err
 	}
@@ -66,7 +66,6 @@ func (m *Model) takeName() error {
 func (m *Model) releaseName() {
 	m.Bus.ReleaseName("org.freedesktop.Notifications")
 }
-
 
 func (m *Model) RegisterIface() error {
 	m.Bus.BusObject().AddMatchSignal(
@@ -107,11 +106,10 @@ func (m Model) Exec() error {
 	for {
 
 	}
-	
+
 	return nil
 }
 
-	
 func (s *Server) GetServerInformation() (
 	string, string, string, string, *dbus.Error,
 ) {
@@ -135,15 +133,15 @@ func (s *Server) Notify(
 ) (uint32, *dbus.Error) {
 	notif := Notification{
 		OriginApp: app_name,
-		Summary: summary,
-		Id: s.nextId,
+		Summary:   summary,
+		Id:        s.nextId,
 		ReplaceId: &replaces_id,
 	}
-	
+
 	s.nextId += 1
-	
+
 	fmt.Printf("%+v\n", notif)
-	
+
 	return notif.Id, nil
 }
 
@@ -160,7 +158,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	
+
 	err = action.Exec()
 	if err != nil {
 		panic(err)
