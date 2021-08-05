@@ -10,17 +10,16 @@ import (
 
 type Model struct {
 	inputF     os.File
-	outputF    os.File
+	OutputFile os.File
 	Bus        *dbus.Conn
-	WriteQueue *chan string
 }
 
 // This structure implements dbus' org.freedesktop.Notifications interface and
 // encapsulates state. It's useful as an object to be exported onto the session
 // bus at /org/freedesktop/Notifications.
 type Server struct {
-	nextId     uint32
-	WriteQueue *chan string
+	nextId uint32
+	Model  *Model
 }
 
 // This is an in-memory representation of the notification for manipulation onto
@@ -97,20 +96,14 @@ func (m Model) Exec() error {
 		defer m.releaseName()
 	}
 
-	if m.WriteQueue == nil {
-		ch := make(chan string, 16)
-		m.WriteQueue = &ch
-	}
-
 	var serv Server
-	serv.WriteQueue = m.WriteQueue
+	serv.Model = &m
 
 	if err := m.RegisterIface(&serv); err != nil {
 		return err
 	}
 
 	for {
-		m.outputF.WriteString(<-*m.WriteQueue)
 	}
 
 	return nil
@@ -151,7 +144,8 @@ func (s *Server) Notify(
 
 	s.nextId += 1
 
-	*s.WriteQueue <- fmt.Sprintf("%+v\n", notif) // TODO pretty formatting
+	// TODO pretty formattting
+	s.Model.OutputFile.WriteString(fmt.Sprintf("%+v\n", notif))
 
 	return notif.Id, nil
 }

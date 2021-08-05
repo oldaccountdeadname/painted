@@ -119,7 +119,7 @@ func (a *Args) Make() (Exec, error) {
 		if e_msg != "" {
 			return nil, errors.New(e_msg)
 		} else {
-			return Model{*reader, *writer, nil, nil}, nil
+			return Model{*reader, *writer, nil}, nil
 		}
 	}
 }
