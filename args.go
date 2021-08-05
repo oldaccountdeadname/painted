@@ -63,7 +63,7 @@ func (a *Args) Apply(k *string, v *string) {
 func (a *Args) Fill(args_s []string) error {
 	for i := 0; i < len(args_s); i++ {
 		var val string
-		key := arg_to_opt(args_s[i])
+		key := argToOpt(args_s[i])
 
 		if ArgRequiresVal[key] {
 			i += 1
@@ -76,7 +76,7 @@ func (a *Args) Fill(args_s []string) error {
 				)
 			}
 			
-			val = arg_to_opt(args_s[i])
+			val = argToOpt(args_s[i])
 		}
 		
 		a.Apply(&key, &val)
@@ -122,7 +122,7 @@ func (o Out) Exec() error {
 // reduce a CLI arg from --string or -s to string (or the corresponding version
 // of the short representation. If neither pattern matches, return the argument
 // unchanged.
-func arg_to_opt(s string) string {
+func argToOpt(s string) string {
 	if s[:2] == "--" {
 		return s[2:]
 	} else if s[0] == '-' {
