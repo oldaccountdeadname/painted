@@ -13,9 +13,9 @@ var (
 )
 
 type Model struct {
-	Input  os.File
-	Output os.File
-	Bus    *dbus.Conn
+	inputF  os.File
+	outputF os.File
+	Bus     *dbus.Conn
 }
 
 // This structure implements dbus' org.freedesktop.Notifications interface and
