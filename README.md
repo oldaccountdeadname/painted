@@ -25,11 +25,11 @@ With no arguments, painted defaults to reading input commands from stdin.
 Available commands (those currently implemented shown checked) are:
 
 -   [ ] help (list commands)
--   [ ] clear (put a blank line to make the \'last\' notification empty)
+-   [x] clear (put a blank line to make the \'last\' notification empty)
 -   [ ] prev (show the previous notification)
 -   [ ] next (show the next notification)
 -   [ ] action \<N> (select the n\'th action)
--   [ ] exit (close the server)
+-   [x] exit (close the server)
 
 These may be shortened to their first letter. If you'd prefer painted to read
 commands over IPC, the same commands are available (not yet). painted does not
@@ -44,8 +44,9 @@ invoke it in a bar definition:
 ```ini
 [module/painted]
 type = custom/script
-exec = "painted"
+exec = "painted --input /tmp/painted.sock"
 tail = true # don't wait for painted to finish before displaying content.
+on-click = "echo 'clear' >> /tmp/painted.sock"
 ```
 
 ### Somewhere else?

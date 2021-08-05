@@ -91,6 +91,8 @@ func (m *Model) CmdLoop() {
 		switch cmd {
 		case "exit":
 			return
+		case "clear":
+			m.OutputFile.WriteString("\n")
 		default:
 			m.OutputFile.WriteString(
 				fmt.Sprintf("%s not understood.\n", cmd),
