@@ -67,14 +67,14 @@ func (m *Model) releaseName() {
 	m.Bus.ReleaseName("org.freedesktop.Notifications")
 }
 
-func (m *Model) RegisterIface() error {
+func (m *Model) RegisterIface(serv *Server) error {
 	m.Bus.BusObject().AddMatchSignal(
 		"org.freedesktop.Notifications",
 		"GetServerInformation",
 	)
 
 	if err := m.Bus.Export(
-		new(Server),
+		serv,
 		"/org/freedesktop/Notifications",
 		"org.freedesktop.Notifications",
 	); err != nil {
@@ -99,7 +99,9 @@ func (m Model) Exec() error {
 		defer m.releaseName()
 	}
 
-	if err := m.RegisterIface(); err != nil {
+	var serv Server
+	
+	if err := m.RegisterIface(&serv); err != nil {
 		return err
 	}
 
