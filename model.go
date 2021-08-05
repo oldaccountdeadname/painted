@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"errors"
 	"fmt"
 	"os"
@@ -81,6 +82,23 @@ func (m *Model) RegisterIface(serv *Server) error {
 	}
 }
 
+func (m *Model) CmdLoop() {
+	scanner := bufio.NewScanner(&m.inputF)
+	for scanner.Scan() {
+		cmd := scanner.Text()
+		// TODO *way* better matching logic
+		// (thinking a trie for prefix-matching)
+		switch cmd {
+		case "exit":
+			return
+		default:
+			m.OutputFile.WriteString(
+				fmt.Sprintf("%s not understood.\n", cmd),
+			)
+		}
+	}
+}
+
 // Connect to the bus, register the interface, launch the notif loop and the
 // input loop (concurrently).
 func (m Model) Exec() error {
@@ -103,8 +121,7 @@ func (m Model) Exec() error {
 		return err
 	}
 
-	for {
-	}
+	m.CmdLoop()
 
 	return nil
 }
