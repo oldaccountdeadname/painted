@@ -135,7 +135,13 @@ func asReader(p string) (io.Reader, error) {
 		a, b := net.Dial("unix", p)
 		return a, b
 	} else {
-		return os.OpenFile(p, os.O_RDONLY, 0664)
+		f, e := os.OpenFile(p, os.O_RDONLY, 0664)
+		if e == nil {
+			// seek to the end and don't reread old commands
+			f.Seek(0, 2)
+		}
+
+		return f, e
 	}
 }
 

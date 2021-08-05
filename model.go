@@ -82,21 +82,37 @@ func (m *Model) RegisterIface(serv *Server) error {
 	}
 }
 
+// Continuously read lines from a file. This does *not* respect EOF, and behaves
+// similarly to `tail -f`. (TODO)
 func (m *Model) CmdLoop() {
-	scanner := bufio.NewScanner(m.inputF)
-	for scanner.Scan() {
-		cmd := scanner.Text()
-		// TODO *way* better matching logic
-		// (thinking a trie for prefix-matching)
-		switch cmd {
-		case "exit":
+	f := bufio.NewReader(m.inputF)
+	for {
+		cmd, err := f.ReadString('\n')
+		if err == io.EOF {
+			// TODO block until modification, then continue.
+
+			// right now, it just spins, which is sorta less than
+			// ideal.
+		} else if err != nil {
 			return
-		case "clear":
-			m.OutputFile.Write([]byte{'\n'})
-		default:
-			m.OutputFile.Write([]byte(
-				fmt.Sprintf("%s not understood.\n", cmd),
-			))
+		} else {
+			// Otherwise, cmd is perfectly valid.
+
+			// strip the newline
+			cmd = cmd[:len(cmd)-1]
+
+			// TODO *way* better matching logic
+			// (thinking a trie for prefix-matching)
+			switch cmd {
+			case "exit":
+				return
+			case "clear":
+				m.OutputFile.Write([]byte{'\n'})
+			default:
+				m.OutputFile.Write([]byte(
+					fmt.Sprintf("%s not understood.\n", cmd),
+				))
+			}
 		}
 	}
 }

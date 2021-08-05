@@ -44,9 +44,9 @@ invoke it in a bar definition:
 ```ini
 [module/painted]
 type = custom/script
-exec = "painted --input /tmp/painted.sock"
+exec = "painted --input /tmp/painted.in"
 tail = true # don't wait for painted to finish before displaying content.
-on-click = "echo 'clear' >> /tmp/painted.sock"
+on-click = "echo 'clear' >> /tmp/painted.in"
 ```
 
 ### Somewhere else?
