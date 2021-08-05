@@ -23,8 +23,8 @@ var (
 	}
 
 	ArgRequiresVal = map[string]bool{
-		"help": false,
-		"input": true,
+		"help":   false,
+		"input":  true,
 		"output": true,
 	}
 )
@@ -63,10 +63,18 @@ func (a *Args) Apply(k *string, v *string) {
 func (a *Args) Fill(args_s []string) error {
 	for i := 0; i < len(args_s); i++ {
 		var val string
-		key := argToOpt(args_s[i])
+		key, m := argToOpt(args_s[i])
+
+		if m == true {
+			return errors.New(fmt.Sprintf(
+				"Arg %s is malformed. Must begin -- or -",
+				key,
+			))
+		}
 
 		if ArgRequiresVal[key] {
 			i += 1
+
 			if i >= len(args_s) {
 				return errors.New(
 					fmt.Sprintf(
@@ -75,10 +83,10 @@ func (a *Args) Fill(args_s []string) error {
 					),
 				)
 			}
-			
-			val = argToOpt(args_s[i])
+
+			val = args_s[i]
 		}
-		
+
 		a.Apply(&key, &val)
 	}
 
@@ -122,15 +130,15 @@ func (o Out) Exec() error {
 }
 
 // reduce a CLI arg from --string or -s to string (or the corresponding version
-// of the short representation. If neither pattern matches, return the argument
-// unchanged.
-func argToOpt(s string) string {
-	if s[:(2 % len(s))] == "--" {
-		return s[2:]
+// of the short representation. If neither pattern matches, the second return
+// value is `true` to indicate a malformed argument.
+func argToOpt(s string) (string, bool) {
+	if s[:(2%len(s))] == "--" {
+		return s[2:], false
 	} else if s[0] == '-' {
-		return AvailableArgs[s[1]]
+		return AvailableArgs[s[1]], false
 	} else {
-		return s
+		return s, true
 	}
 
 }
