@@ -148,6 +148,11 @@ func (s *Server) Notify(
 		ReplaceId: &replaces_id,
 	}
 
+	// only replace if the sender indicated it
+	if *notif.ReplaceId == 0 {
+		notif.ReplaceId = nil
+	}
+
 	s.nextId += 1
 
 	*s.WriteQueue <- fmt.Sprintf("%+v\n", notif) // TODO pretty formatting
