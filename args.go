@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	"io"
 	"os"
 )
 
@@ -97,10 +98,8 @@ func (a *Args) Make() (Exec, error) {
 	if a.Help {
 		return HelpMessage, nil
 	} else {
-		reader, r_err := os.OpenFile(a.Input, os.O_RDONLY, 0664)
-		writer, w_err := os.OpenFile(
-			a.Output, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 664,
-		)
+		reader, r_err := asReader(a.Input)
+		writer, w_err := asWriter(a.Output)
 
 		e_msg := ""
 		if r_err != nil {
@@ -127,6 +126,14 @@ func (a *Args) Make() (Exec, error) {
 func (o Out) Exec() error {
 	fmt.Printf("%s", o.msg)
 	return nil
+}
+
+func asReader(p string) (io.Reader, error) {
+	return os.OpenFile(p, os.O_RDONLY, 0664)
+}
+
+func asWriter(p string) (io.Writer, error) {
+	return os.OpenFile(p, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 664)
 }
 
 // reduce a CLI arg from --string or -s to string (or the corresponding version
