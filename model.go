@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"sync/atomic"
 
 	"github.com/godbus/dbus/v5"
 )
@@ -20,7 +21,7 @@ type Model struct {
 // encapsulates state. It's useful as an object to be exported onto the session
 // bus at /org/freedesktop/Notifications.
 type Server struct {
-	nextId uint32
+	NextId uint32
 	Model  *Model
 }
 
@@ -33,7 +34,8 @@ type Notification struct {
 	OriginApp string
 	Summary   string
 	Id        uint32
-	ReplaceId *uint32
+	ReplaceId uint32
+	/* if Id == ReplaceId, then the notif doesn't replace anything. */
 }
 
 // Connect to the bus. If an error occurs, m.Bus is set to nil.
@@ -140,6 +142,7 @@ func (m Model) Exec() error {
 
 	var serv Server
 	serv.Model = &m
+	serv.NextId = 1
 
 	if err := m.RegisterIface(&serv); err != nil {
 		return err
@@ -174,16 +177,21 @@ func (s *Server) Notify(
 	notif := Notification{
 		OriginApp: app_name,
 		Summary:   summary,
-		Id:        s.nextId,
-		ReplaceId: &replaces_id,
+		Id:        s.NextId,
+		ReplaceId: replaces_id,
 	}
 
-	// only replace if the sender indicated it
-	if *notif.ReplaceId == 0 {
-		notif.ReplaceId = nil
+	// If the sender doesn't want to replace a notification, they send 0 as
+	// the replace ID. If that's the case, we assign the replace ID the
+	// newly allocated id to indicate that this notification is not a
+	// replacement for anything, and then we have to update nextID
+	// accordingly. Otherwise, we can recycle the ID.
+	if notif.ReplaceId == 0 {
+		notif.ReplaceId = notif.Id
+		atomic.AddUint32(&s.NextId, 1)
+	} else {
+		notif.Id = notif.ReplaceId
 	}
-
-	s.nextId += 1
 
 	s.Model.Notify(notif)
 
