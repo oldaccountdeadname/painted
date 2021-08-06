@@ -14,7 +14,7 @@ import (
 type Model struct {
 	InputFile  io.Reader
 	OutputFile io.Writer
-	Bus        *dbus.Conn
+	bus        *dbus.Conn
 }
 
 // This structure implements dbus' org.freedesktop.Notifications interface and
@@ -41,12 +41,12 @@ type Notification struct {
 // Connect to the bus. If an error occurs, m.Bus is set to nil.
 func (m *Model) connect() error {
 	bus, err := dbus.ConnectSessionBus()
-	m.Bus = bus
+	m.bus = bus
 	return err
 }
 
 func (m *Model) takeName() error {
-	reply, err := m.Bus.RequestName(
+	reply, err := m.bus.RequestName(
 		"org.freedesktop.Notifications",
 		dbus.NameFlagReplaceExisting,
 	)
@@ -65,16 +65,16 @@ func (m *Model) takeName() error {
 }
 
 func (m *Model) releaseName() {
-	m.Bus.ReleaseName("org.freedesktop.Notifications")
+	m.bus.ReleaseName("org.freedesktop.Notifications")
 }
 
 func (m *Model) RegisterIface(serv *Server) error {
-	m.Bus.BusObject().AddMatchSignal(
+	m.bus.BusObject().AddMatchSignal(
 		"org.freedesktop.Notifications",
 		"GetServerInformation",
 	)
 
-	if err := m.Bus.Export(
+	if err := m.bus.Export(
 		serv,
 		"/org/freedesktop/Notifications",
 		"org.freedesktop.Notifications",
@@ -131,7 +131,7 @@ func (m Model) Exec() error {
 	if err := m.connect(); err != nil {
 		return err
 	} else {
-		defer m.Bus.Close()
+		defer m.bus.Close()
 	}
 
 	if err := m.takeName(); err != nil {
