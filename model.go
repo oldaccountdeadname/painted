@@ -10,7 +10,7 @@ import (
 )
 
 type Model struct {
-	inputF     io.Reader
+	InputFile  io.Reader
 	OutputFile io.Writer
 	Bus        *dbus.Conn
 }
@@ -85,7 +85,7 @@ func (m *Model) RegisterIface(serv *Server) error {
 // Continuously read lines from a file. This does *not* respect EOF, and behaves
 // similarly to `tail -f`. (TODO)
 func (m *Model) CmdLoop() {
-	f := bufio.NewReader(m.inputF)
+	f := bufio.NewReader(m.InputFile)
 	for {
 		cmd, err := f.ReadString('\n')
 		if err == io.EOF {
