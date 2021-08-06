@@ -9,6 +9,7 @@ import (
 	"github.com/godbus/dbus/v5"
 )
 
+// The model links together dbus and IO interaction into one entry point.
 type Model struct {
 	InputFile  io.Reader
 	OutputFile io.Writer
