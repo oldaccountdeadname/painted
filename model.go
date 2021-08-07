@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"sync/atomic"
+	"unsafe"
 
 	"gitlab.com/lincolnauster/painted/dbus"
 	"golang.org/x/sys/unix"
@@ -13,7 +14,7 @@ import (
 
 // The model links together dbus and IO interaction into one entry point.
 type Model struct {
-	InputFd    int32
+	InputPath  string
 	InputFile  io.Reader
 	OutputFile io.Writer
 	bus        dbus.SessionConn
@@ -72,7 +73,7 @@ func (m *Model) CmdLoop() {
 	for {
 		cmd, err := f.ReadString('\n')
 		if err == io.EOF {
-			// blockUntilModify(m.InputFile)
+			blockUntilModify(m.InputPath)
 		} else if err != nil {
 			return
 		} else {
@@ -169,28 +170,22 @@ func (s *Server) Notify(
 	return notif.Id, nil
 }
 
-// Register an epoll interest on a given file descriptor with the kernel, and
-// `epoll_wait`. See epoll(2). This is a linux-specific syscall.
+// Use inotify to watch a given file path and `read` (block until an event
+// occurs). See inotify(2). This is a linux-specific syscall.
 //
 // The wait is level-triggered so as not to block indefinitely if called in a
 // loop.
 //
 // Errors are ignored.
-func blockUntilModify(f int32) {
-	epoll, err := unix.EpollCreate1(0) // no special flags
+func blockUntilModify(f string) {
+	nf, err := unix.InotifyInit()
 	
 	if err != nil {
 		return
 	}
 
-	events := unix.EpollEvent{
-		Events: unix.EPOLLIN,
-		Fd:     f,
-		Pad:    0, // ???
-	}
+	unix.InotifyAddWatch(nf, f, unix.IN_MODIFY)
 
-	buf := make([]unix.EpollEvent, 1)
-	
-	unix.EpollCtl(epoll, unix.EPOLL_CTL_ADD, int(f), &events)
-	unix.EpollWait(epoll, buf, 60_000)
+	ev := make([]byte, unsafe.Sizeof(unix.InotifyEvent{}))
+	unix.Read(nf, ev)
 }

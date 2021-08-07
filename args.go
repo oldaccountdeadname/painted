@@ -4,6 +4,8 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"strings"
+	"net"
 	"os"
 
 	"gitlab.com/lincolnauster/painted/dbus"
@@ -100,7 +102,7 @@ func (a *Args) Make() (Exec, error) {
 	if a.Help {
 		return HelpMessage, nil
 	} else {
-		reader, rFd, r_err := asReader(a.Input)
+		reader, r_err := asReader(a.Input)
 		writer, w_err := asWriter(a.Output)
 
 		e_msg := ""
@@ -121,7 +123,7 @@ func (a *Args) Make() (Exec, error) {
 			return nil, errors.New(e_msg)
 		} else {
 			return Model{
-				rFd,
+				a.Input,
 				reader,
 				writer,
 				dbus.SessionConn{nil},
@@ -134,15 +136,19 @@ func (o Out) Exec() error {
 	fmt.Printf("%s", o.msg)
 	return nil
 }
-
-func asReader(p string) (io.Reader, int32, error) {
-	f, e := os.OpenFile(p, os.O_RDONLY, 0664)
-	if e == nil {
-		// seek to the end and don't reread old commands
-		f.Seek(0, 2)
+func asReader(p string) (io.Reader, error) {
+	if strings.HasSuffix(p, ".sock") {
+		a, b := net.Dial("unix", p)
+		return a, b
+	} else {
+		f, e := os.OpenFile(p, os.O_RDONLY, 0664)
+		if e == nil {
+			// seek to the end and don't reread old commands
+			f.Seek(0, 2)
+		}
+		return f, e
 	}
-
-	return f, int32(f.Fd()), e
+		
 }
 
 func asWriter(p string) (io.Writer, error) {
