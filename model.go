@@ -14,10 +14,9 @@ import (
 
 // The model links together dbus and IO interaction into one entry point.
 type Model struct {
-	InputPath  string
-	InputFile  io.Reader
-	OutputFile io.Writer
-	bus        dbus.SessionConn
+	Input  Reader
+	Output Writer
+	bus    dbus.SessionConn
 }
 
 // This structure implements dbus' org.freedesktop.Notifications interface and
@@ -67,11 +66,11 @@ func (m *Model) RegisterIface(serv *Server) error {
 // Continuously read lines from a file. This does *not* respect EOF, and behaves
 // similarly to `tail -f`. (TODO)
 func (m *Model) CmdLoop() {
-	f := bufio.NewReader(m.InputFile)
+	f := bufio.NewReader(m.Input.File)
 	for {
 		cmd, err := f.ReadString('\n')
 		if err == io.EOF {
-			blockUntilModify(m.InputPath)
+			blockUntilModify(m.Input.Path)
 		} else if err != nil {
 			return
 		} else {
@@ -86,9 +85,9 @@ func (m *Model) CmdLoop() {
 			case "exit":
 				return
 			case "clear":
-				m.OutputFile.Write([]byte{'\n'})
+				m.Output.File.Write([]byte{'\n'})
 			default:
-				m.OutputFile.Write([]byte(
+				m.Output.File.Write([]byte(
 					fmt.Sprintf("%s not understood.\n", cmd),
 				))
 			}
@@ -98,14 +97,14 @@ func (m *Model) CmdLoop() {
 
 func (m *Model) Notify(n Notification) {
 	// TODO pretty formattting
-	m.OutputFile.Write([]byte(fmt.Sprintf("%+v\n", n)))
+	m.Output.File.Write([]byte(fmt.Sprintf("%+v\n", n)))
 }
 
 // Connect to the bus, register the interface, launch the notif loop and the
 // input loop (concurrently).
 func (m Model) Exec() error {
 	defer m.bus.Close()
-	
+
 	if err := m.takeName(); err != nil {
 		return err
 	}
@@ -150,11 +149,6 @@ func (s *Server) Notify(
 		Id:        replaces_id,
 	}
 
-	// If the sender doesn't want to replace a notification, they send 0 as
-	// the replace ID. If that's the case, we assign the replace ID the
-	// newly allocated id to indicate that this notification is not a
-	// replacement for anything, and then we have to update nextID
-	// accordingly. Otherwise, we can recycle the ID.
 	if notif.Id == 0 {
 		notif.Id = s.NextId
 		atomic.AddUint32(&s.NextId, 1)
@@ -174,7 +168,7 @@ func (s *Server) Notify(
 // Errors are ignored.
 func blockUntilModify(f string) {
 	nf, err := unix.InotifyInit()
-	
+
 	if err != nil {
 		return
 	}
