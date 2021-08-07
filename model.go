@@ -136,8 +136,6 @@ func (m Model) Exec() error {
 
 	if err := m.takeName(); err != nil {
 		return err
-	} else {
-		defer m.releaseName()
 	}
 
 	var serv Server
