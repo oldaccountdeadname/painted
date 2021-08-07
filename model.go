@@ -8,10 +8,12 @@ import (
 	"sync/atomic"
 
 	"gitlab.com/lincolnauster/painted/dbus"
+	"golang.org/x/sys/unix"
 )
 
 // The model links together dbus and IO interaction into one entry point.
 type Model struct {
+	InputFd    int32
 	InputFile  io.Reader
 	OutputFile io.Writer
 	bus        dbus.SessionConn
@@ -70,10 +72,7 @@ func (m *Model) CmdLoop() {
 	for {
 		cmd, err := f.ReadString('\n')
 		if err == io.EOF {
-			// TODO block until modification, then continue.
-
-			// right now, it just spins, which is sorta less than
-			// ideal.
+			// blockUntilModify(m.InputFile)
 		} else if err != nil {
 			return
 		} else {
@@ -168,4 +167,30 @@ func (s *Server) Notify(
 	s.Model.Notify(notif)
 
 	return notif.Id, nil
+}
+
+// Register an epoll interest on a given file descriptor with the kernel, and
+// `epoll_wait`. See epoll(2). This is a linux-specific syscall.
+//
+// The wait is level-triggered so as not to block indefinitely if called in a
+// loop.
+//
+// Errors are ignored.
+func blockUntilModify(f int32) {
+	epoll, err := unix.EpollCreate1(0) // no special flags
+	
+	if err != nil {
+		return
+	}
+
+	events := unix.EpollEvent{
+		Events: unix.EPOLLIN,
+		Fd:     f,
+		Pad:    0, // ???
+	}
+
+	buf := make([]unix.EpollEvent, 1)
+	
+	unix.EpollCtl(epoll, unix.EPOLL_CTL_ADD, int(f), &events)
+	unix.EpollWait(epoll, buf, 60_000)
 }
