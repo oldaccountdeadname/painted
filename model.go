@@ -7,14 +7,14 @@ import (
 	"io"
 	"sync/atomic"
 
-	"github.com/godbus/dbus/v5"
+	"gitlab.com/lincolnauster/painted/dbus"
 )
 
 // The model links together dbus and IO interaction into one entry point.
 type Model struct {
 	InputFile  io.Reader
 	OutputFile io.Writer
-	bus        *dbus.Conn
+	bus        dbus.SessionConn
 }
 
 // This structure implements dbus' org.freedesktop.Notifications interface and
@@ -38,34 +38,17 @@ type Notification struct {
 	/* if Id == ReplaceId, then the notif doesn't replace anything. */
 }
 
-// Connect to the bus. If an error occurs, m.Bus is set to nil.
-func (m *Model) connect() error {
-	bus, err := dbus.ConnectSessionBus()
-	m.bus = bus
-	return err
-}
-
 func (m *Model) takeName() error {
-	reply, err := m.bus.RequestName(
+	reply := m.bus.TakeName(
 		"org.freedesktop.Notifications",
-		dbus.NameFlagReplaceExisting,
 	)
-
-	if err != nil {
-		return err
-	}
-
-	if reply != dbus.RequestNameReplyPrimaryOwner {
+	if reply != true {
 		return errors.New(
 			`Can't take org.freedesktop.Notifications. Is another notif daemon running?`,
 		)
 	}
 
 	return nil
-}
-
-func (m *Model) releaseName() {
-	m.bus.ReleaseName("org.freedesktop.Notifications")
 }
 
 func (m *Model) RegisterIface(serv *Server) error {
@@ -123,12 +106,8 @@ func (m *Model) Notify(n Notification) {
 // Connect to the bus, register the interface, launch the notif loop and the
 // input loop (concurrently).
 func (m Model) Exec() error {
-	if err := m.connect(); err != nil {
-		return err
-	} else {
-		defer m.bus.Close()
-	}
-
+	defer m.bus.Close()
+	
 	if err := m.takeName(); err != nil {
 		return err
 	}
