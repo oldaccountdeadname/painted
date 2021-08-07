@@ -123,8 +123,10 @@ func (a *Args) Make() (Exec, error) {
 			return nil, errors.New(e_msg)
 		} else {
 			return Model{
-				Reader{reader, a.Input},
-				Writer{writer, a.Output},
+				Io{
+					Reader{reader, a.Input},
+					Writer{writer, a.Output},
+				},
 				dbus.SessionConn{nil},
 			}, nil
 		}

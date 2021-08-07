@@ -1,22 +1,17 @@
 package main
 
 import (
-	"bufio"
 	"errors"
 	"fmt"
-	"io"
 	"sync/atomic"
-	"unsafe"
 
 	"gitlab.com/lincolnauster/painted/dbus"
-	"golang.org/x/sys/unix"
 )
 
 // The model links together dbus and IO interaction into one entry point.
 type Model struct {
-	Input  Reader
-	Output Writer
-	bus    dbus.SessionConn
+	io  Io
+	bus dbus.SessionConn
 }
 
 // This structure implements dbus' org.freedesktop.Notifications interface and
@@ -66,38 +61,33 @@ func (m *Model) RegisterIface(serv *Server) error {
 // Continuously read lines from a file. This does *not* respect EOF, and behaves
 // similarly to `tail -f`. (TODO)
 func (m *Model) CmdLoop() {
-	f := bufio.NewReader(m.Input.File)
+	lines := m.io.Lines()
+	
 	for {
-		cmd, err := f.ReadString('\n')
-		if err == io.EOF {
-			blockUntilModify(m.Input.Path)
-		} else if err != nil {
+		cmd, err := lines()
+		
+		if err != nil {
+			panic(err)
+		}
+		
+		cmd = cmd[:len(cmd)-1]
+
+		switch cmd {
+		case "exit":
 			return
-		} else {
-			// Otherwise, cmd is perfectly valid.
-
-			// strip the newline
-			cmd = cmd[:len(cmd)-1]
-
-			// TODO *way* better matching logic
-			// (thinking a trie for prefix-matching)
-			switch cmd {
-			case "exit":
-				return
-			case "clear":
-				m.Output.File.Write([]byte{'\n'})
-			default:
-				m.Output.File.Write([]byte(
-					fmt.Sprintf("%s not understood.\n", cmd),
-				))
-			}
+		case "clear":
+			m.io.Writer.File.Write([]byte{'\n'})
+		default:
+			m.io.Writer.File.Write([]byte(
+				fmt.Sprintf("%s not understood.\n", cmd),
+			))
 		}
 	}
 }
 
 func (m *Model) Notify(n Notification) {
 	// TODO pretty formattting
-	m.Output.File.Write([]byte(fmt.Sprintf("%+v\n", n)))
+	m.io.Writer.File.Write([]byte(fmt.Sprintf("%+v\n", n)))
 }
 
 // Connect to the bus, register the interface, launch the notif loop and the
@@ -157,24 +147,4 @@ func (s *Server) Notify(
 	s.Model.Notify(notif)
 
 	return notif.Id, nil
-}
-
-// Use inotify to watch a given file path and `read` (block until an event
-// occurs). See inotify(2). This is a linux-specific syscall.
-//
-// The wait is level-triggered so as not to block indefinitely if called in a
-// loop.
-//
-// Errors are ignored.
-func blockUntilModify(f string) {
-	nf, err := unix.InotifyInit()
-
-	if err != nil {
-		return
-	}
-
-	unix.InotifyAddWatch(nf, f, unix.IN_MODIFY)
-
-	ev := make([]byte, unsafe.Sizeof(unix.InotifyEvent{}))
-	unix.Read(nf, ev)
 }
