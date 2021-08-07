@@ -37,8 +37,6 @@ type Notification struct {
 	OriginApp string
 	Summary   string
 	Id        uint32
-	ReplaceId uint32
-	/* if Id == ReplaceId, then the notif doesn't replace anything. */
 }
 
 func (m *Model) takeName() error {
@@ -149,8 +147,7 @@ func (s *Server) Notify(
 	notif := Notification{
 		OriginApp: app_name,
 		Summary:   summary,
-		Id:        s.NextId,
-		ReplaceId: replaces_id,
+		Id:        replaces_id,
 	}
 
 	// If the sender doesn't want to replace a notification, they send 0 as
@@ -158,11 +155,9 @@ func (s *Server) Notify(
 	// newly allocated id to indicate that this notification is not a
 	// replacement for anything, and then we have to update nextID
 	// accordingly. Otherwise, we can recycle the ID.
-	if notif.ReplaceId == 0 {
-		notif.ReplaceId = notif.Id
+	if notif.Id == 0 {
+		notif.Id = s.NextId
 		atomic.AddUint32(&s.NextId, 1)
-	} else {
-		notif.Id = notif.ReplaceId
 	}
 
 	s.Model.Notify(notif)
