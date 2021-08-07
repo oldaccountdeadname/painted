@@ -72,7 +72,7 @@ func (m *Model) CmdLoop() {
 	for {
 		cmd, err := f.ReadString('\n')
 		if err == io.EOF {
-			// blockUntilModify(m.InputFile)
+			blockUntilModify(m.InputFd)
 		} else if err != nil {
 			return
 		} else {
