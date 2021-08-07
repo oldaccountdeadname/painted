@@ -69,11 +69,6 @@ func (m *Model) releaseName() {
 }
 
 func (m *Model) RegisterIface(serv *Server) error {
-	m.bus.BusObject().AddMatchSignal(
-		"org.freedesktop.Notifications",
-		"GetServerInformation",
-	)
-
 	if err := m.bus.Export(
 		serv,
 		"/org/freedesktop/Notifications",
