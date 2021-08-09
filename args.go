@@ -8,6 +8,8 @@ import (
 	"net"
 	"os"
 
+	"github.com/gammazero/deque"
+
 	"gitlab.com/lincolnauster/painted/dbus"
 )
 
@@ -128,6 +130,7 @@ func (a *Args) Make() (Exec, error) {
 					Writer{writer, a.Output},
 				},
 				dbus.SessionConn{nil},
+				deque.Deque{},
 			}, nil
 		}
 	}

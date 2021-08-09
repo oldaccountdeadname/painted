@@ -4,13 +4,16 @@ import (
 	"errors"
 	"sync/atomic"
 
+	"github.com/gammazero/deque"
+
 	"gitlab.com/lincolnauster/painted/dbus"
 )
 
 // The model links together dbus and IO interaction into one entry point.
 type Model struct {
-	io  Io
-	bus dbus.SessionConn
+	io    Io
+	bus   dbus.SessionConn
+	queue deque.Deque
 }
 
 // This structure implements dbus' org.freedesktop.Notifications interface and
@@ -61,14 +64,14 @@ func (m *Model) RegisterIface(serv *Server) error {
 // similarly to `tail -f`.
 func (m *Model) CmdLoop() {
 	next_line := m.io.Lines()
-	
+
 	for {
 		cmd, err := next_line()
-		
+
 		if err != nil {
 			panic(err)
 		}
-		
+
 		cmd = cmd[:len(cmd)-1]
 
 		switch cmd {
@@ -84,7 +87,8 @@ func (m *Model) CmdLoop() {
 
 func (m *Model) Notify(n Notification) {
 	// TODO pretty formattting
-	m.io.Writef("%+v\n", n)
+	m.queue.PushFront(n)
+	m.io.Writef("%+v\n", m.queue.Front())
 }
 
 // Connect to the bus, register the interface, launch the notif loop and the
