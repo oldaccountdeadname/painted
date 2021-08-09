@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"fmt"
 	"io"
 	"unsafe"
 
@@ -46,7 +47,16 @@ func (i *Io) Lines() func() (string, error) {
 
 /* writing helpers */
 
+func (i *Io) Write(s string) {
+	i.Writer.File.Write([]byte(s))
+}
+
+func (i *Io) Writef(f string, v ...interface{}) {
+	i.Write(fmt.Sprintf(f, v...))
+}
+
 /* misc helpers */
+
 // Use inotify to watch a given file path and `read` (block until an event
 // occurs). See inotify(2). This is a linux-specific syscall.
 //

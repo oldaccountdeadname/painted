@@ -2,7 +2,6 @@ package main
 
 import (
 	"errors"
-	"fmt"
 	"sync/atomic"
 
 	"gitlab.com/lincolnauster/painted/dbus"
@@ -59,12 +58,12 @@ func (m *Model) RegisterIface(serv *Server) error {
 }
 
 // Continuously read lines from a file. This does *not* respect EOF, and behaves
-// similarly to `tail -f`. (TODO)
+// similarly to `tail -f`.
 func (m *Model) CmdLoop() {
-	lines := m.io.Lines()
+	next_line := m.io.Lines()
 	
 	for {
-		cmd, err := lines()
+		cmd, err := next_line()
 		
 		if err != nil {
 			panic(err)
@@ -76,18 +75,16 @@ func (m *Model) CmdLoop() {
 		case "exit":
 			return
 		case "clear":
-			m.io.Writer.File.Write([]byte{'\n'})
+			m.io.Write("\n")
 		default:
-			m.io.Writer.File.Write([]byte(
-				fmt.Sprintf("%s not understood.\n", cmd),
-			))
+			m.io.Writef("%s not understood.\n", cmd)
 		}
 	}
 }
 
 func (m *Model) Notify(n Notification) {
 	// TODO pretty formattting
-	m.io.Writer.File.Write([]byte(fmt.Sprintf("%+v\n", n)))
+	m.io.Writef("%+v\n", n)
 }
 
 // Connect to the bus, register the interface, launch the notif loop and the
@@ -119,7 +116,6 @@ func (s *Server) GetServerInformation() (
 }
 
 func (s *Server) GetCapabilities() ([]string, *dbus.Error) {
-	fmt.Println("GetCapabilities called.")
 	return []string{}, nil
 }
 
