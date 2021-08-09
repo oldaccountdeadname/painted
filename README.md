@@ -3,10 +3,10 @@ plain text notification daemon
 
 ## Overview
 painted is a dead simple notification daemon: it reads commands from a file
-(which may be a UNIX socket [not yet] for IPC or any text file (including stdin)
-for simplicity), notifications from dbus, and writes output to a given file
-(usually stdout). It aims to be a UNIX-ish replacement for standard notification
-daemons, primarily for bars.
+(which may be a UNIX socket for IPC or any text file such as stdin for
+simplicity), notifications from dbus, and writes output to a given file (usually
+stdout). It aims to be a UNIX-ish replacement for standard notification daemons,
+primarily for usage with bars.
 
 Despite the name (a rough contraction of the initialism PTND, for Plain Text
 Notification Daemon), the scope of PTND is not limited to plain text: planned
@@ -24,17 +24,23 @@ show up in the terminal window where you've run painted.
 With no arguments, painted defaults to reading input commands from stdin.
 Available commands (those currently implemented shown checked) are:
 
--   [ ] help (list commands)
--   [x] clear (put a blank line to make the \'last\' notification empty)
--   [ ] prev (show the previous notification)
--   [ ] next (show the next notification)
--   [ ] action \<N> (select the n\'th action)
--   [x] exit (close the server)
+- [ ] help (list commands)
+- [x] clear (print a blank line to hide the notification)
+- [ ] dismiss
+- [ ] remove (remove the notification from history: does not imply dismissal)
+- [ ] prev (show the previous notification)
+- [ ] next (show the next notification)
+- [ ] action \<N> (select the n\'th action)
+- [x] exit (close the server)
 
-These may be shortened to their first letter. If you'd prefer painted to read
-commands over IPC, the same commands are available (not yet). painted does not
-come with a client, and in the interest of simplicity and scripting, you should
-use netcat or similar to write to the socket.
+You may specify the input and output file anywhere, including /dev/stdin
+(default in) and /dev/stdout (default out). If you want to control it from a
+different file, specify it. For instance, in bars, you wouldn't want to have
+input be given over stdin because there is no (convenient) way to access a
+processes' stdin without an interactive shell.
+
+If the input file ends in `.sock`, painted connects to it as a client on a UNIX
+socket.
 
 ### In Polybar
 Polybar provides the script input, where a running command's stdout will be
