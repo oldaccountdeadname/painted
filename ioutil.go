@@ -60,9 +60,6 @@ func (i *Io) Writef(f string, v ...interface{}) {
 // Use inotify to watch a given file path and `read` (block until an event
 // occurs). See inotify(2). This is a linux-specific syscall.
 //
-// The wait is level-triggered so as not to block indefinitely if called in a
-// loop.
-//
 // Errors are ignored.
 func blockUntilModify(f string) {
 	nf, err := unix.InotifyInit()
