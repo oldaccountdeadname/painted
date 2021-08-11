@@ -1,6 +1,14 @@
 package main
 
-import "os"
+import (
+	"fmt"
+	"os"
+)
+
+func exit(e error) {
+	fmt.Fprintln(os.Stderr, e.Error())
+	os.Exit(1)
+}
 
 func main() {
 	args := Args{
@@ -10,16 +18,16 @@ func main() {
 	}
 
 	if err := args.Fill(os.Args[1:]); err != nil {
-		panic(err)
+		exit(err)
 	}
 
 	action, err := args.Make()
 	if err != nil {
-		panic(err)
+		exit(err)
 	}
 
 	err = action.Exec()
 	if err != nil {
-		panic(err)
+		exit(err)
 	}
 }
