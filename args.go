@@ -129,8 +129,8 @@ func (a *Args) Make() (Exec, error) {
 					Reader{reader, a.Input},
 					Writer{writer, a.Output},
 				},
-				dbus.SessionConn{nil},
-				IoQueue{*deque.New(), nil},
+				dbus.SessionConn{},
+				IoQueue{*deque.New(), 0, nil},
 			}, nil
 		}
 	}
