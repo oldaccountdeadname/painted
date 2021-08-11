@@ -28,8 +28,8 @@ Available commands (those currently implemented shown checked) are:
 - [x] clear (print a blank line to hide the notification)
 - [ ] dismiss
 - [ ] remove (remove the notification from history: does not imply dismissal)
-- [ ] prev (show the previous notification)
-- [ ] next (show the next notification)
+- [x] previous (show the previous notification)
+- [x] next (show the next notification)
 - [ ] action \<N> (select the n\'th action)
 - [x] exit (close the server)
 
@@ -52,7 +52,10 @@ invoke it in a bar definition:
 type = custom/script
 exec = "painted --input /tmp/painted.in"
 tail = true
+
 click-left = "echo 'clear' >> /tmp/painted.in"
+scroll-up = "echo 'previous' >> /tmp/painted.in"
+scroll-down = "echo 'next' >> /tmp/painted.in"
 ```
 
 ### Somewhere else?
