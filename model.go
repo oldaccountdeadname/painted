@@ -4,16 +4,14 @@ import (
 	"errors"
 	"sync/atomic"
 
-	"github.com/gammazero/deque"
-
 	"gitlab.com/lincolnauster/painted/dbus"
 )
 
 // The model links together dbus and IO interaction into one entry point.
 type Model struct {
-	io    Io
+	Io    Io
 	bus   dbus.SessionConn
-	queue deque.Deque
+	queue IoQueue
 }
 
 // This structure implements dbus' org.freedesktop.Notifications interface and
@@ -63,7 +61,7 @@ func (m *Model) RegisterIface(serv *Server) error {
 // Continuously read lines from a file. This does *not* respect EOF, and behaves
 // similarly to `tail -f`.
 func (m *Model) CmdLoop() {
-	next_line := m.io.Lines()
+	next_line := m.Io.Lines()
 
 	for {
 		cmd, err := next_line()
@@ -78,22 +76,25 @@ func (m *Model) CmdLoop() {
 		case "exit":
 			return
 		case "clear":
-			m.io.Write("\n")
+			m.Io.Write("\n")
 		default:
-			m.io.Writef("%s not understood.\n", cmd)
+			m.Io.Writef("%s not understood.\n", cmd)
 		}
 	}
 }
 
 func (m *Model) Notify(n Notification) {
-	// TODO pretty formattting
-	m.queue.PushFront(n)
-	m.io.Writef("%+v\n", m.queue.Front())
+	m.queue.Push(&n)
+	m.queue.Display()
 }
 
 // Connect to the bus, register the interface, launch the notif loop and the
 // input loop (concurrently).
 func (m Model) Exec() error {
+	if m.queue.Model == nil {
+		m.queue.Model = &m
+	}
+
 	defer m.bus.Close()
 
 	if err := m.takeName(); err != nil {

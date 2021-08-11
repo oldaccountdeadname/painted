@@ -4,9 +4,9 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"strings"
 	"net"
 	"os"
+	"strings"
 
 	"github.com/gammazero/deque"
 
@@ -130,7 +130,7 @@ func (a *Args) Make() (Exec, error) {
 					Writer{writer, a.Output},
 				},
 				dbus.SessionConn{nil},
-				deque.Deque{},
+				IoQueue{*deque.New(), nil},
 			}, nil
 		}
 	}
@@ -152,7 +152,7 @@ func asReader(p string) (io.Reader, error) {
 		}
 		return f, e
 	}
-		
+
 }
 
 func asWriter(p string) (io.Writer, error) {
