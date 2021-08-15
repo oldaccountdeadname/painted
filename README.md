@@ -64,10 +64,21 @@ If you have a specific bar or application that would benefit from unique
 usage instructions, open an issue and ask for them, or write it out
 yourself and submit a pull request!
 
-# Roadmap
+# Roadmap and TODOs
+This isn't supposed to be one of those highly minimal UNIX unitilites, but it's
+also not supposed to be massive. That said, here's what I'm currently wanting to
+implement:
 
-There aren\'t any super specific goals for this project: I personally
-don\'t need much out of a notification daemon, so if you need something
-this doesn\'t have, go ahead and open an issue or implement it yourself
-and send a PR. Just note that it *is* plain text, so it won\'t ever
-support things like images or formatting.
+- Basic: everything necessary before I tag a 1.0.0
+  - [x] Actually record notifications (obviously)
+  - [x] Notification history and navigation
+  - [ ] persistence
+  - [ ] Command matching by prefix (i.e., only `pr` to activate `previous` so
+        long as no other command begins with `pr`)
+  - [ ] notification format strings
+  - [ ] body text (maybe with an `expand` command)
+- Additional: everything that would be nice to have, but not actually necessary
+  as part of a notification daemon:
+  - [ ] Do not disturb mode (would require some somewhat major restructuring)
+  - [ ] Sounds
+  - [ ] Actions
