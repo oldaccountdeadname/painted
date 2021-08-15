@@ -65,7 +65,7 @@ usage instructions, open an issue and ask for them, or write it out
 yourself and submit a pull request!
 
 # Roadmap and TODOs
-This isn't supposed to be one of those highly minimal UNIX unitilites, but it's
+This isn't supposed to be one of those highly minimal UNIX utilities, but it's
 also not supposed to be massive. That said, here's what I'm currently wanting to
 implement:
 
