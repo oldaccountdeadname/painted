@@ -72,7 +72,7 @@ implement:
 - Basic: everything necessary before I tag a 1.0.0
   - [x] Actually record notifications (obviously)
   - [x] Notification history and navigation
-  - [ ] persistence
+  - [x] persistence
   - [ ] Command matching by prefix (i.e., only `pr` to activate `previous` so
         long as no other command begins with `pr`)
   - [ ] notification format strings

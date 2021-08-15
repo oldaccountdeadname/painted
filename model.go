@@ -127,7 +127,7 @@ func (s *Server) GetServerInformation() (
 }
 
 func (s *Server) GetCapabilities() ([]string, *dbus.Error) {
-	return []string{}, nil
+	return []string{"persistence"}, nil
 }
 
 func (s *Server) Notify(
