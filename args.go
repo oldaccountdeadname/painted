@@ -157,7 +157,7 @@ func asReader(p string) (io.Reader, error) {
 }
 
 func asWriter(p string) (io.Writer, error) {
-	return os.OpenFile(p, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 664)
+	return os.OpenFile(p, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0664)
 }
 
 // reduce a CLI arg from --string or -s to string (or the corresponding version
