@@ -50,22 +50,6 @@ type Out struct {
 	msg string
 }
 
-// Apply a CLI arg given a key and an associated value (the latter of which may
-// be nil). If arguments are invalid, they are ignored.
-func (a *Args) Apply(k *string, v *string) {
-	if *k == "help" {
-		a.Help = true
-	} else if v == nil {
-		return
-	}
-
-	if *k == "input" {
-		a.Input = *v
-	} else if *k == "output" {
-		a.Output = *v
-	}
-}
-
 // Initialize `self` with a list of arguments. Errors returned are fatal.
 func (a *Args) Fill(args_s []string) error {
 	for i := 0; i < len(args_s); i++ {
@@ -94,7 +78,7 @@ func (a *Args) Fill(args_s []string) error {
 			val = args_s[i]
 		}
 
-		a.Apply(&key, &val)
+		a.apply(&key, &val)
 	}
 
 	return nil
@@ -140,6 +124,23 @@ func (o Out) Exec() error {
 	fmt.Printf("%s", o.msg)
 	return nil
 }
+
+// Apply a CLI arg given a key and an associated value (the latter of which may
+// be nil). If arguments are invalid, they are ignored.
+func (a *Args) apply(k *string, v *string) {
+	if *k == "help" {
+		a.Help = true
+	} else if v == nil {
+		return
+	}
+
+	if *k == "input" {
+		a.Input = *v
+	} else if *k == "output" {
+		a.Output = *v
+	}
+}
+
 func asReader(p string) (io.Reader, error) {
 	if strings.HasSuffix(p, ".sock") {
 		a, b := net.Dial("unix", p)
