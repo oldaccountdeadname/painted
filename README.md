@@ -42,21 +42,11 @@ processes' stdin without an interactive shell.
 If the input file ends in `.sock`, painted connects to it as a client on a UNIX
 socket.
 
-### In Polybar
-Polybar provides the script input, where a running command's stdout will be
-displayed as text. You can define a module with the following options, and
-invoke it in a bar definition:
-
-```ini
-[module/painted]
-type = custom/script
-exec = "painted --input /tmp/painted.in"
-tail = true
-
-click-left = "echo 'clear' >> /tmp/painted.in"
-scroll-up = "echo 'previous' >> /tmp/painted.in"
-scroll-down = "echo 'next' >> /tmp/painted.in"
-```
+### Some Specific Config Files
+Check the contrib/ folder for some config files that invoke painted in a way
+that makes sense. Note that the contrib directory isn't super well-maintained,
+and just exists as a dumping ground for stuff that you may or may not want to
+use[^1].
 
 ### Somewhere else?
 
@@ -82,3 +72,5 @@ implement:
   - [ ] Do not disturb mode (would require some somewhat major restructuring)
   - [ ] Sounds
   - [ ] Actions
+
+[^1]: https://drewdevault.com/2020/06/06/Add-a-contrib-directory.html
