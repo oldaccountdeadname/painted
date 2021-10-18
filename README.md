@@ -37,7 +37,7 @@ You may specify the input and output file anywhere, including /dev/stdin
 (default in) and /dev/stdout (default out). If you want to control it from a
 different file, specify it. For instance, in bars, you wouldn't want to have
 input be given over stdin because there is no (convenient) way to access a
-processes' stdin without an interactive shell.
+process's stdin without an interactive shell.
 
 If the input file ends in `.sock`, painted connects to it as a client on a UNIX
 socket.
