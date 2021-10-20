@@ -24,7 +24,7 @@ show up in the terminal window where you've run painted.
 With no arguments, painted defaults to reading input commands from stdin.
 Available commands (those currently implemented shown checked) are:
 
-- [ ] help (list commands)
+- [x] help (list commands).
 - [x] clear (print a blank line to hide the notification)
 - [ ] dismiss
 - [ ] remove (remove the notification from history: does not imply dismissal)

@@ -83,6 +83,10 @@ func (m *Model) CmdLoop() {
 		case "previous":
 			m.queue.Prev()
 			m.queue.Display()
+		case "help":
+			m.Io.Write(
+				"command should be: exit | clear | next | previous | help\n",
+			)
 		default:
 			m.Io.Writef("%s not understood.\n", cmd)
 		}
