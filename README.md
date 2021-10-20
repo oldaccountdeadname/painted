@@ -14,6 +14,11 @@ features include actions, sounds, and more. The goal is to achieve 'minimalism'
 through an unrestrictive design that facilitates scripting, run-time
 modification, and, of course, completeness.
 
+## Building
+Painted is built with Nix Flakes. On a system with Nix Flakes, run `nix build`.
+If you don't have Flakes and/or Nix, `go build` will probably work, too, though
+this isn't :sparkles: officially supported :sparkles:.
+
 ## Usage
 
 ### In General
@@ -48,7 +53,7 @@ that makes sense. Note that the contrib directory isn't super well-maintained,
 and just exists as a dumping ground for stuff that you may or may not want to
 use[^1].
 
-# Roadmap and TODOs
+## Roadmap and TODOs
 This isn't supposed to be one of those highly minimal UNIX utilities, but it's
 also not supposed to be massive. That said, here's what I'm currently wanting to
 implement:
