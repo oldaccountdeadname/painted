@@ -17,7 +17,7 @@ type Model struct {
 // This structure implements dbus' org.freedesktop.Notifications interface and
 // encapsulates state. It's useful as an object to be exported onto the session
 // bus at /org/freedesktop/Notifications.
-type Server struct {
+type server struct {
 	NextId uint32
 	Model  *Model
 }
@@ -44,7 +44,7 @@ func (m *Model) takeName() error {
 	return nil
 }
 
-func (m *Model) RegisterIface(serv *Server) error {
+func (m *Model) RegisterIface(serv *server) error {
 	return m.bus.Export(
 		serv,
 		"/org/freedesktop/Notifications",
@@ -105,7 +105,7 @@ func (m Model) Exec() error {
 		return err
 	}
 
-	var serv Server
+	var serv server
 	serv.Model = &m
 	serv.NextId = 1
 
@@ -118,17 +118,17 @@ func (m Model) Exec() error {
 	return nil
 }
 
-func (s *Server) GetServerInformation() (
+func (s *server) GetServerInformation() (
 	string, string, string, string, *dbus.Error,
 ) {
 	return "painted", "none", "v0.1.0", "v1.2", nil
 }
 
-func (s *Server) GetCapabilities() ([]string, *dbus.Error) {
+func (s *server) GetCapabilities() ([]string, *dbus.Error) {
 	return []string{"persistence"}, nil
 }
 
-func (s *Server) Notify(
+func (s *server) Notify(
 	app_name string,
 	replaces_id uint32,
 	app_icon string,
