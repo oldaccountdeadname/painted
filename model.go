@@ -45,15 +45,11 @@ func (m *Model) takeName() error {
 }
 
 func (m *Model) RegisterIface(serv *Server) error {
-	if err := m.bus.Export(
+	return m.bus.Export(
 		serv,
 		"/org/freedesktop/Notifications",
 		"org.freedesktop.Notifications",
-	); err != nil {
-		return err
-	} else {
-		return nil
-	}
+	)
 }
 
 // Continuously read lines from a file. This does *not* respect EOF, and behaves
