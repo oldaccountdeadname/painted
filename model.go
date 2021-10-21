@@ -34,10 +34,8 @@ type Notification struct {
 }
 
 func (m *Model) takeName() error {
-	reply := m.bus.TakeName(
-		"org.freedesktop.Notifications",
-	)
-	if reply != true {
+	if reply := m.bus.TakeName("org.freedesktop.Notifications");
+	   reply != true {
 		return errors.New(
 			`Can't take org.freedesktop.Notifications. Is another notif daemon running?`,
 		)
