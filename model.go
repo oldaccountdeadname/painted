@@ -44,7 +44,7 @@ func (m *Model) takeName() error {
 	return nil
 }
 
-func (m *Model) RegisterIface(serv *server) error {
+func (m *Model) registerIface(serv *server) error {
 	return m.bus.Export(
 		serv,
 		"/org/freedesktop/Notifications",
@@ -109,7 +109,7 @@ func (m Model) Exec() error {
 	serv.Model = &m
 	serv.NextId = 1
 
-	if err := m.RegisterIface(&serv); err != nil {
+	if err := m.registerIface(&serv); err != nil {
 		return err
 	}
 
