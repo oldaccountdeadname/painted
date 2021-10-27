@@ -18,7 +18,7 @@ type Model struct {
 // encapsulates state. It's useful as an object to be exported onto the session
 // bus at /org/freedesktop/Notifications.
 type server struct {
-	NextId uint32
+	nextId uint32
 	Callback func (Notification)
 }
 
@@ -107,7 +107,6 @@ func (m Model) Exec() error {
 
 	var serv server
 	serv.Callback = m.Notify
-	serv.NextId = 1
 
 	if err := m.registerIface(&serv); err != nil {
 		return err
@@ -145,8 +144,8 @@ func (s *server) Notify(
 	}
 
 	if notif.Id == 0 {
-		notif.Id = s.NextId
-		atomic.AddUint32(&s.NextId, 1)
+		atomic.AddUint32(&s.nextId, 1)
+		notif.Id = s.nextId
 	}
 
 	s.Callback(notif)
