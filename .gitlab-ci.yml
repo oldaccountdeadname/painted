@@ -1,5 +1,6 @@
 stages:
-  - build
+- build
+- test
 
 painted:
   stage: build
@@ -12,4 +13,9 @@ painted:
     cp -Lr result out
   artifacts:
     paths:
-      - out
+    - out
+
+sast:
+  stage: test
+include:
+- template: Security/SAST.gitlab-ci.yml
