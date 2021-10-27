@@ -11,7 +11,10 @@
     };
 
     devShell.x86_64-linux = pkgs.mkShell {
-      buildInputs = [ pkgs.go ];
+      buildInputs = [ pkgs.go pkgs.libnotify ];
+      shellHook = ''
+        ln -sf ../../.githooks/pre-commit .git/hooks/pre-commit
+      '';
     };
   };
 }

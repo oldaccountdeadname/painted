@@ -1,0 +1,3 @@
+#!/bin/sh
+
+nix develop -c go fmt | xargs git add
