@@ -12,4 +12,4 @@ painted:
     tar -cf result.tar.gz result/
   artifacts:
     paths:
-      - result.tar.gz
+      - /lincolnauster/painted/result/bin/painted
