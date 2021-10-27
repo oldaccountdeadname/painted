@@ -6,6 +6,7 @@ painted:
   image: nixos/nix
   script: |
     nix-env -iA nixpkgs.nixUnstable
+    nix-env -iA nixpkgs.git # we need this for the flake
     echo 'experimental-features = nix-command flakes' >> /etc/nix/nix.conf
     nix build
   artifacts:
