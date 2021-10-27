@@ -9,7 +9,7 @@ painted:
     nix-env -iA nixpkgs.git # we need this for the flake
     echo 'experimental-features = nix-command flakes' >> /etc/nix/nix.conf
     nix build
-    tar -cf result.tar.gz result/
+    cp -Lr result out
   artifacts:
     paths:
-      - /lincolnauster/painted/result/bin/painted
+      - out
