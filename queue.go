@@ -5,7 +5,7 @@ import "github.com/gammazero/deque"
 type IoQueue struct {
 	queue deque.Deque
 	index int
-	Model *Model
+	PrintCallback func (*Notification)
 }
 
 func (i *IoQueue) Next() {
@@ -27,5 +27,5 @@ func (i *IoQueue) Push(n *Notification) {
 
 func (i *IoQueue) Display() {
 	n := i.queue.At(i.index).(*Notification)
-	i.Model.Io.Writef("%+v\n", n)
+	i.PrintCallback(n)
 }

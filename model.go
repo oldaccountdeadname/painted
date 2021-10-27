@@ -95,8 +95,8 @@ func (m *Model) Notify(n Notification) {
 // Connect to the bus, register the interface, launch the notif loop and the
 // input loop (concurrently).
 func (m Model) Exec() error {
-	if m.queue.Model == nil {
-		m.queue.Model = &m
+	m.queue.PrintCallback = func (n *Notification) {
+		m.Io.Writef("%+v\n", n)
 	}
 
 	defer m.bus.Close()
