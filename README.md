@@ -31,7 +31,6 @@ Available commands (those currently implemented shown checked) are:
 
 - [x] help (list commands).
 - [x] clear (print a blank line to hide the notification)
-- [ ] dismiss
 - [ ] remove (remove the notification from history: does not imply dismissal)
 - [x] previous (show the previous notification)
 - [x] next (show the next notification)
