@@ -11,11 +11,7 @@ func exit(e error) {
 }
 
 func main() {
-	args := Args{
-		false,
-		"/dev/stdin",
-		"/dev/stdout",
-	}
+	args := DefaultArgs()
 
 	if err := args.Fill(os.Args[1:]); err != nil {
 		exit(err)

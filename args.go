@@ -50,6 +50,14 @@ type Out struct {
 	msg string
 }
 
+func DefaultArgs() Args {
+	return Args{
+		false,
+		"/dev/stdin",
+		"/dev/stdout",
+	}
+}
+
 // Initialize `self` with a list of arguments. Errors returned are fatal.
 func (a *Args) Fill(args_s []string) error {
 	for i := 0; i < len(args_s); i++ {
