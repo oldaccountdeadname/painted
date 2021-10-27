@@ -1,0 +1,12 @@
+stages:
+  - build
+
+painted:
+  stage: build
+  image: nixos/nix
+  script: |
+    nix-env -iA nixpkgs.nixUnstable
+    echo 'experimental-features = nix-command flakes' >> /etc/nix/nix.conf
+    nix build
+  artifacts:
+  - result/bin/painted
