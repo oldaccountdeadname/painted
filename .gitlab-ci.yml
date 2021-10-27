@@ -9,4 +9,5 @@ painted:
     echo 'experimental-features = nix-command flakes' >> /etc/nix/nix.conf
     nix build
   artifacts:
-  - result/bin/painted
+    paths:
+      - result/bin/painted
