@@ -18,8 +18,8 @@ type Model struct {
 // encapsulates state. It's useful as an object to be exported onto the session
 // bus at /org/freedesktop/Notifications.
 type server struct {
-	nextId uint32
-	Callback func (Notification)
+	nextId   uint32
+	Callback func(Notification)
 }
 
 // This is an in-memory representation of the notification for manipulation onto
@@ -34,8 +34,7 @@ type Notification struct {
 }
 
 func (m *Model) takeName() error {
-	if reply := m.bus.TakeName("org.freedesktop.Notifications");
-	   reply != true {
+	if reply := m.bus.TakeName("org.freedesktop.Notifications"); reply != true {
 		return errors.New(
 			`Can't take org.freedesktop.Notifications. Is another notif daemon running?`,
 		)
@@ -95,7 +94,7 @@ func (m *Model) Notify(n Notification) {
 // Connect to the bus, register the interface, launch the notif loop and the
 // input loop (concurrently).
 func (m Model) Exec() error {
-	m.queue.PrintCallback = func (n *Notification) {
+	m.queue.PrintCallback = func(n *Notification) {
 		m.Io.Writef("%+v\n", n)
 	}
 

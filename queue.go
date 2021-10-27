@@ -3,9 +3,9 @@ package main
 import "github.com/gammazero/deque"
 
 type IoQueue struct {
-	queue deque.Deque
-	index int
-	PrintCallback func (*Notification)
+	queue         deque.Deque
+	index         int
+	PrintCallback func(*Notification)
 }
 
 func (i *IoQueue) Next() {
