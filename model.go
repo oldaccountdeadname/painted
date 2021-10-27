@@ -19,7 +19,7 @@ type Model struct {
 // bus at /org/freedesktop/Notifications.
 type server struct {
 	NextId uint32
-	Model  *Model
+	Callback func (Notification)
 }
 
 // This is an in-memory representation of the notification for manipulation onto
@@ -106,7 +106,7 @@ func (m Model) Exec() error {
 	}
 
 	var serv server
-	serv.Model = &m
+	serv.Callback = m.Notify
 	serv.NextId = 1
 
 	if err := m.registerIface(&serv); err != nil {
@@ -149,7 +149,7 @@ func (s *server) Notify(
 		atomic.AddUint32(&s.NextId, 1)
 	}
 
-	s.Model.Notify(notif)
+	s.Callback(notif)
 
 	return notif.Id, nil
 }
