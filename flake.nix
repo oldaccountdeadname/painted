@@ -7,7 +7,7 @@
       version = "v0.1.0";
 
       src = builtins.filterSource
-        (path: type: !(type == "directory" && path == "/contrib"))
+        (path: type: baseNameOf path != "contrib")
         ./.;
 
       vendorSha256 = "sha256-Nsnw5er32WosaHUIqc13qwh+vnQ01LZ9wIXECIu2VXk=";
