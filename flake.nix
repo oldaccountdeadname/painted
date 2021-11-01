@@ -6,7 +6,10 @@
       name = "painted";
       version = "v0.1.0";
 
-      src = ./.;
+      src = builtins.filterSource
+        (path: type: !(type == "directory" && path == "/contrib"))
+        ./.;
+
       vendorSha256 = "sha256-Nsnw5er32WosaHUIqc13qwh+vnQ01LZ9wIXECIu2VXk=";
     };
 
