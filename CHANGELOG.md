@@ -8,7 +8,7 @@ incomplete. However, it's incomplete yet stable in that incompleteness.
 If you want to write scripts for Painted, you can do so now, with
 *enough* assurance that little will break in the future. Features will
 mostly only be added before a 1.0.0. Note, however, that we're still in
-0.x.x, and you should heed SemVar's advice: anything may change at any
+0.x.x, and you should heed SemVer's advice: anything may change at any
 time.
 
 The biggest notable missing feature is the lack of format strings, so
