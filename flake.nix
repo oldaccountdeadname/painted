@@ -10,7 +10,7 @@
         (path: type: baseNameOf path != "contrib")
         ./.;
 
-      vendorSha256 = "sha256-Nsnw5er32WosaHUIqc13qwh+vnQ01LZ9wIXECIu2VXk=";
+      vendorSha256 = "sha256-o+3VBTE0DMBF/knCOUg9s8RTPuPtENwwqpT8fwRS4CY=";
     };
 
     devShell.x86_64-linux = pkgs.mkShell {
