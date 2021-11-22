@@ -16,6 +16,22 @@ installed:
 nix develop
 ```
 
-## Submitting Patches (Merge Requests)
-Development is done through GitLab, *not* GitHub! Fork, push, and submit a merge
-request there.
+## Submitting Patches
+Painted attempts to have a linear history with few massive merge commits. Make
+sure to commit atomic changes that always build and work properly with *good
+commit messages*. Good commit messages look like this:
+
+```
+use the imperative to describe your change
+
+The first line is in the imperative with no capital or punctuation.
+Following paragraphs details why you made the change and what it does.
+These should be mostly hard-wrapped at 72 characters.
+
+More paragraphs may provide additional detail. If you include any code,
+indent it with one tab, and precede it with a newline:
+
+	fmt.Println("\thello world!");
+
+If text follows a code block, precede it with a blank line.
+```
