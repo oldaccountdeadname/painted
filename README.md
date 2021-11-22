@@ -72,3 +72,8 @@ implement:
   - [ ] Actions
 
 [^1]: https://drewdevault.com/2020/06/06/Add-a-contrib-directory.html
+
+## Releases and Changelog
+Painted roughly follows SemVer. Changes are documented in annotated git tags. To
+view the release notes for a given release, run `git show v[release-number]`,
+for example, `git show v0.1.0`.
