@@ -17,7 +17,7 @@ type Model struct {
 // This structure implements dbus' org.freedesktop.Notifications interface and
 // encapsulates state. It's useful as an object to be exported onto the session
 // bus at /org/freedesktop/Notifications.
-type server struct {
+type listener struct {
 	nextId  uint32
 	Recieve func(Notification)
 }
@@ -43,9 +43,9 @@ func (m *Model) takeName() error {
 	return nil
 }
 
-func (m *Model) registerIface(serv *server) error {
+func (m *Model) registerIface(listener *listener) error {
 	return m.bus.Export(
-		serv,
+		listener,
 		"/org/freedesktop/Notifications",
 		"org.freedesktop.Notifications",
 	)
@@ -104,10 +104,10 @@ func (m Model) Exec() error {
 		return err
 	}
 
-	var serv server
-	serv.Recieve = m.Notify
+	var listener listener
+	listener.Recieve = m.Notify
 
-	if err := m.registerIface(&serv); err != nil {
+	if err := m.registerIface(&listener); err != nil {
 		return err
 	}
 
@@ -116,17 +116,17 @@ func (m Model) Exec() error {
 	return nil
 }
 
-func (s *server) GetServerInformation() (
+func (l *listener) GetServerInformation() (
 	string, string, string, string, *dbus.Error,
 ) {
 	return "painted", "none", "v0.1.0", "v1.2", nil
 }
 
-func (s *server) GetCapabilities() ([]string, *dbus.Error) {
+func (l *listener) GetCapabilities() ([]string, *dbus.Error) {
 	return []string{"persistence"}, nil
 }
 
-func (s *server) Notify(
+func (l *listener) Notify(
 	app_name string,
 	replaces_id uint32,
 	app_icon string,
@@ -143,11 +143,11 @@ func (s *server) Notify(
 	}
 
 	if notif.Id == 0 {
-		atomic.AddUint32(&s.nextId, 1)
-		notif.Id = s.nextId
+		atomic.AddUint32(&l.nextId, 1)
+		notif.Id = l.nextId
 	}
 
-	s.Recieve(notif)
+	l.Recieve(notif)
 
 	return notif.Id, nil
 }
