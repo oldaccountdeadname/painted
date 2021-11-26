@@ -34,13 +34,13 @@ type Notification struct {
 }
 
 func (m *Model) takeName() error {
-	if reply := m.bus.TakeName("org.freedesktop.Notifications"); reply != true {
+	if !m.bus.TakeName("org.freedesktop.Notifications") {
 		return errors.New(
 			`Can't take org.freedesktop.Notifications. Is another notif daemon running?`,
 		)
+	} else {
+		return nil
 	}
-
-	return nil
 }
 
 func (m *Model) registerIface(listener *listener) error {
