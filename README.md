@@ -16,8 +16,8 @@ modification, and, of course, completeness.
 
 ## Building
 Painted is built with Nix Flakes. On a system with Nix Flakes, run `nix build`.
-If you don't have Flakes and/or Nix, `go build` will probably work, too, though
-this isn't :sparkles: officially supported :sparkles:.
+If you don't have Flakes and/or Nix, `go build ./cmd/painted` will probably
+work, too, though this isn't :sparkles: officially supported :sparkles:.
 
 ## Usage
 
