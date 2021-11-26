@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/lincolnauster/painted/pkg"
+	"github.com/lincolnauster/painted/pkg/painted"
 )
 
 func exit(e error) {
