@@ -10,7 +10,7 @@ import (
 
 	"github.com/gammazero/deque"
 
-	"gitlab.com/lincolnauster/painted/dbus"
+	"github.com/lincolnauster/painted/dbus"
 )
 
 var HelpMessage = Out{

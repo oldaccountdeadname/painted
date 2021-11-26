@@ -1,4 +1,4 @@
-module gitlab.com/lincolnauster/painted
+module github.com/lincolnauster/painted
 
 go 1.16
 

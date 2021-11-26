@@ -4,7 +4,7 @@ import (
 	"errors"
 	"sync/atomic"
 
-	"gitlab.com/lincolnauster/painted/dbus"
+	"github.com/lincolnauster/painted/dbus"
 )
 
 // The model links together dbus and IO interaction into one entry point.
