@@ -1,4 +1,4 @@
-package main
+package painted
 
 import "github.com/gammazero/deque"
 
