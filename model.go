@@ -142,9 +142,8 @@ func (l *listener) Notify(
 		Id:        replaces_id,
 	}
 
-	if notif.Id == 0 {
-		atomic.AddUint32(&l.nextId, 1)
-		notif.Id = l.nextId
+	if notif.Id == 0 { // test if we need to give this an ID
+		notif.Id = atomic.AddUint32(&l.nextId, 1) + 1
 	}
 
 	l.Recieve(notif)
