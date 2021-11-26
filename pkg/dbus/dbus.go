@@ -17,17 +17,13 @@ type Error = dbus.Error
 // Names are automatically returned to dbus when the connection is closed.
 func (s *SessionConn) TakeName(name string) bool {
 	s.lazyConnect()
-	
+
 	resp, err := s.Conn.RequestName(
 		name,
 		dbus.NameFlagReplaceExisting | dbus.NameFlagDoNotQueue,
 	)
-	
-	if resp != dbus.RequestNameReplyPrimaryOwner || err != nil {
-		return false
-	} else {
-		return true
-	}
+
+	return err == nil && resp == dbus.RequestNameReplyPrimaryOwner
 }
 
 func (s *SessionConn) Export(obj interface{}, path string, iface string) error {
