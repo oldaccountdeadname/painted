@@ -5,7 +5,7 @@ import "github.com/godbus/dbus/v5"
 // This wraps the go dbus lib and provides an idiomatic interface. It abstracts
 // over things like connection state by providing a lazy API.
 type SessionConn struct {
- 	Conn *dbus.Conn
+	Conn *dbus.Conn
 }
 
 type Error = dbus.Error
@@ -20,7 +20,7 @@ func (s *SessionConn) TakeName(name string) bool {
 
 	resp, err := s.Conn.RequestName(
 		name,
-		dbus.NameFlagReplaceExisting | dbus.NameFlagDoNotQueue,
+		dbus.NameFlagReplaceExisting|dbus.NameFlagDoNotQueue,
 	)
 
 	return err == nil && resp == dbus.RequestNameReplyPrimaryOwner
@@ -37,15 +37,14 @@ func (s *SessionConn) Close() {
 
 func (s *SessionConn) lazyConnect() error {
 	var conn *dbus.Conn
-	var err  error
+	var err error
 	if s.Conn == nil {
 		conn, err = dbus.ConnectSessionBus()
 	} else {
 		conn = s.Conn
-		err  = nil
+		err = nil
 	}
 
 	s.Conn = conn
 	return err
 }
-
