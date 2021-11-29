@@ -5,6 +5,7 @@ import (
 	"sync/atomic"
 
 	"github.com/lincolnauster/painted/pkg/dbus"
+	"github.com/lincolnauster/painted/pkg/trie"
 )
 
 // The model links together dbus and IO interaction into one entry point.
@@ -54,6 +55,13 @@ func (m *Model) registerIface(listener *listener) error {
 // Continuously read lines from a file. This does *not* respect EOF, and behaves
 // similarly to `tail -f`.
 func (m *Model) CmdLoop() {
+	var cmd_trie trie.Trie
+	cmd_trie.Insert([]rune("exit"))
+	cmd_trie.Insert([]rune("clear"))
+	cmd_trie.Insert([]rune("next"))
+	cmd_trie.Insert([]rune("previous"))
+	cmd_trie.Insert([]rune("help"))
+
 	next_line := m.Io.Lines()
 
 	for {
@@ -64,8 +72,19 @@ func (m *Model) CmdLoop() {
 		}
 
 		cmd = cmd[:len(cmd)-1]
+		matches := cmd_trie.Search([]rune(cmd))
+		var term string
 
-		switch cmd {
+		if len(matches) > 1 {
+			m.Io.Writef("%s is ambiguous.\n", cmd)
+			continue
+		} else if len(matches) < 1 {
+			term = cmd
+		} else {
+			term = string(matches[0])
+		}
+
+		switch term {
 		case "exit":
 			return
 		case "clear":
@@ -81,7 +100,7 @@ func (m *Model) CmdLoop() {
 				"command should be: exit | clear | next | previous | help\n",
 			)
 		default:
-			m.Io.Writef("%s not understood.\n", cmd)
+			m.Io.Writef("%s not matched with any valid commands: see `help`.\n", cmd)
 		}
 	}
 }
