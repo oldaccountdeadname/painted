@@ -1,31 +1,26 @@
 package main
 
 import (
-	"fmt"
+	"log"
 	"os"
 
 	"github.com/lincolnauster/painted/pkg/painted"
 )
 
-func exit(e error) {
-	fmt.Fprintln(os.Stderr, e.Error())
-	os.Exit(1)
-}
-
 func main() {
 	args := painted.DefaultArgs()
 
 	if err := args.Fill(os.Args[1:]); err != nil {
-		exit(err)
+		log.Fatal(err)
 	}
 
 	action, err := args.Make()
 	if err != nil {
-		exit(err)
+		log.Fatal(err)
 	}
 
 	err = action.Exec()
 	if err != nil {
-		exit(err)
+		log.Fatal(err)
 	}
 }
