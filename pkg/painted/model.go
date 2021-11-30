@@ -76,23 +76,8 @@ func (m *Model) CmdLoop() {
 		cmd_r := []rune(cmd)
 		match := cmd_trie.SearchWithDefault(cmd_r, cmd_r)
 
-		switch string(match) {
-		case "exit":
-			return
-		case "clear":
-			m.Io.Write("\n")
-		case "next":
-			m.queue.Next()
-			m.queue.Display()
-		case "previous":
-			m.queue.Prev()
-			m.queue.Display()
-		case "help":
-			m.Io.Write(
-				"command should be: exit | clear | next | previous | help\n",
-			)
-		default:
-			m.Io.Writef("%s not matched with any valid commands: see `help`.\n", cmd)
+		if m.performCmd(string(match)) {
+			break
 		}
 	}
 }
@@ -125,6 +110,30 @@ func (m Model) Exec() error {
 	m.CmdLoop()
 
 	return nil
+}
+
+// Perform a command, and return true if an exit was requested.
+func (m *Model) performCmd(cmd string) bool {
+	switch cmd {
+	case "exit":
+		return true
+	case "clear":
+		m.Io.Write("\n")
+	case "next":
+		m.queue.Next()
+		m.queue.Display()
+	case "previous":
+		m.queue.Prev()
+		m.queue.Display()
+	case "help":
+		m.Io.Write(
+			"command should be: exit | clear | next | previous | help\n",
+		)
+	default:
+		m.Io.Writef("%s not matched with any valid commands: see `help`.\n", cmd)
+	}
+
+	return false
 }
 
 func (l *listener) GetServerInformation() (
