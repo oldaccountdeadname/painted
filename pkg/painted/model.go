@@ -75,10 +75,7 @@ func (m *Model) CmdLoop() {
 		matches := cmd_trie.Search([]rune(cmd))
 		var term string
 
-		if len(matches) > 1 {
-			m.Io.Writef("%s is ambiguous.\n", cmd)
-			continue
-		} else if len(matches) < 1 {
+		if len(matches) < 1 {
 			term = cmd
 		} else {
 			term = string(matches[0])
