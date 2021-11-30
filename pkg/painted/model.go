@@ -52,8 +52,9 @@ func (m *Model) registerIface(listener *listener) error {
 	)
 }
 
-// Continuously read lines from a file. This does *not* respect EOF, and behaves
-// similarly to `tail -f`.
+// Assuming a properly set up Io member, read and process all input commands as
+// they arise (irrespective of EOF). This is blocking until the exit command is
+// sent.
 func (m *Model) CmdLoop() {
 	var cmd_trie trie.Trie
 	cmd_trie.Insert([]rune("exit"))
