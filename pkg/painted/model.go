@@ -72,16 +72,10 @@ func (m *Model) CmdLoop() {
 		}
 
 		cmd = cmd[:len(cmd)-1]
-		matches := cmd_trie.Search([]rune(cmd))
-		var term string
+		cmd_r := []rune(cmd)
+		match := cmd_trie.SearchWithDefault(cmd_r, cmd_r)
 
-		if len(matches) < 1 {
-			term = cmd
-		} else {
-			term = string(matches[0])
-		}
-
-		switch term {
+		switch string(match) {
 		case "exit":
 			return
 		case "clear":

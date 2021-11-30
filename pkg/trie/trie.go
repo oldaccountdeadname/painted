@@ -30,6 +30,17 @@ func (t *Trie) Search(prefix []rune) [][]rune {
 	}
 }
 
+// Search for a rune slice in the trie. If exactly one match is not produced, the
+// default is returned.
+func (t *Trie) SearchWithDefault(prefix []rune, def []rune) []rune {
+	matches := t.Search(prefix)
+	if len(matches) != 1 {
+		return def
+	} else {
+		return matches[0]
+	}
+}
+
 func (t *trieNode) Insert(key []rune) *trieNode {
 	if len(key) == 0 {
 		return t
