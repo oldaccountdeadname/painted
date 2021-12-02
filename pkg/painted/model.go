@@ -10,7 +10,7 @@ import (
 
 // The model links together dbus and IO interaction into one entry point.
 type Model struct {
-	Io    Io
+	io    Io
 	bus   dbus.SessionConn
 	queue IoQueue
 }
@@ -67,7 +67,7 @@ func (m *Model) CmdLoop() {
 	cmd_trie.Insert([]rune("previous"))
 	cmd_trie.Insert([]rune("help"))
 
-	next_line := m.Io.Lines()
+	next_line := m.io.Lines()
 
 	for {
 		cmd, err := next_line()
@@ -95,7 +95,7 @@ func (m *Model) Notify(n Notification) {
 // input loop (concurrently).
 func (m Model) Exec() error {
 	m.queue.PrintCallback = func(n *Notification) {
-		m.Io.Writef("%+v\n", n)
+		m.io.Writef("%+v\n", n)
 	}
 
 	defer m.bus.Close()
@@ -122,7 +122,7 @@ func (m *Model) performCmd(cmd string) bool {
 	case "exit":
 		return true
 	case "clear":
-		m.Io.Write("\n")
+		m.io.Write("\n")
 	case "next":
 		m.queue.Next()
 		m.queue.Display()
@@ -130,11 +130,11 @@ func (m *Model) performCmd(cmd string) bool {
 		m.queue.Prev()
 		m.queue.Display()
 	case "help":
-		m.Io.Write(
+		m.io.Write(
 			"command should be: exit | clear | next | previous | help\n",
 		)
 	default:
-		m.Io.Writef("%s not matched with any valid commands: see `help`.\n", cmd)
+		m.io.Writef("%s not matched with any valid commands: see `help`.\n", cmd)
 	}
 
 	return false
