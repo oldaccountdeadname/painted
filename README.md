@@ -61,7 +61,7 @@ implement:
   - [x] Actually record notifications (obviously)
   - [x] Notification history and navigation
   - [x] persistence
-  - [ ] Command matching by prefix (i.e., only `pr` to activate `previous` so
+  - [x] Command matching by prefix (i.e., only `pr` to activate `previous` so
         long as no other command begins with `pr`)
   - [ ] notification format strings
   - [ ] body text (maybe with an `expand` command)
