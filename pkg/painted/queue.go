@@ -3,9 +3,8 @@ package painted
 import "github.com/gammazero/deque"
 
 type IoQueue struct {
-	queue         deque.Deque
-	index         int
-	PrintCallback func(*Notification)
+	queue deque.Deque
+	index int
 }
 
 func (i *IoQueue) Next() {
@@ -25,7 +24,7 @@ func (i *IoQueue) Push(n *Notification) {
 	i.queue.PushFront(n)
 }
 
-func (i *IoQueue) Display() {
+func (i *IoQueue) CallOnCurrent(callback func(*Notification)) {
 	n := i.queue.At(i.index).(*Notification)
-	i.PrintCallback(n)
+	callback(n)
 }

@@ -88,16 +88,14 @@ func (m *Model) CmdLoop() {
 
 func (m *Model) Notify(n Notification) {
 	m.queue.Push(&n)
-	m.queue.Display()
+	m.queue.CallOnCurrent(func(n *Notification) {
+		m.io.Writef("%+v\n", n)
+	})
 }
 
 // Connect to the bus, register the interface, launch the notif loop and the
 // input loop (concurrently).
 func (m Model) Exec() error {
-	m.queue.PrintCallback = func(n *Notification) {
-		m.io.Writef("%+v\n", n)
-	}
-
 	defer m.bus.Close()
 
 	if err := m.takeName(); err != nil {
@@ -125,10 +123,14 @@ func (m *Model) performCmd(cmd string) bool {
 		m.io.Write("\n")
 	case "next":
 		m.queue.Next()
-		m.queue.Display()
+		m.queue.CallOnCurrent(func(n *Notification) {
+			m.io.Writef("%+v\n", n)
+		})
 	case "previous":
 		m.queue.Prev()
-		m.queue.Display()
+		m.queue.CallOnCurrent(func(n *Notification) {
+			m.io.Writef("%+v\n", n)
+		})
 	case "help":
 		m.io.Write(
 			"command should be: exit | clear | next | previous | help\n",
