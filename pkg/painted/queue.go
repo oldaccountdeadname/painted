@@ -2,29 +2,29 @@ package painted
 
 import "github.com/gammazero/deque"
 
-type IoQueue struct {
+type NotifQueue struct {
 	queue deque.Deque
 	index int
 }
 
-func (i *IoQueue) Next() {
-	if i.index > 0 {
-		i.index -= 1
+func (n *NotifQueue) Next() {
+	if n.index > 0 {
+		n.index -= 1
 	}
 }
 
-func (i *IoQueue) Prev() {
-	if i.index+1 < i.queue.Len() {
-		i.index += 1
+func (n *NotifQueue) Prev() {
+	if n.index+1 < n.queue.Len() {
+		n.index += 1
 	}
 }
 
-func (i *IoQueue) Push(n *Notification) {
-	i.index = 0
-	i.queue.PushFront(n)
+func (n *NotifQueue) Push(x *Notification) {
+	n.index = 0
+	n.queue.PushFront(x)
 }
 
-func (i *IoQueue) CallOnCurrent(callback func(*Notification)) {
-	n := i.queue.At(i.index).(*Notification)
-	callback(n)
+func (n *NotifQueue) CallOnCurrent(callback func(*Notification)) {
+	x := n.queue.At(n.index).(*Notification)
+	callback(x)
 }

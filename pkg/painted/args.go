@@ -122,7 +122,7 @@ func (a *Args) Make() (Exec, error) {
 					Writer{writer, a.Output},
 				},
 				dbus.SessionConn{},
-				IoQueue{*deque.New(), 0},
+				NotifQueue{*deque.New(), 0},
 			}, nil
 		}
 	}

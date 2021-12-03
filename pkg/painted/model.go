@@ -12,7 +12,7 @@ import (
 type Model struct {
 	io    Io
 	bus   dbus.SessionConn
-	queue IoQueue
+	queue NotifQueue
 }
 
 // This structure implements dbus' org.freedesktop.Notifications interface and
