@@ -78,7 +78,7 @@ func (m *Model) CmdLoop() {
 func (m *Model) Notify(n Notification) {
 	m.queue.Push(&n)
 	m.queue.CallOnCurrent(func(n *Notification) {
-		m.io.Writef("%+v\n", n)
+		m.io.Write(n.to_string())
 	})
 }
 
@@ -113,12 +113,12 @@ func (m *Model) performCmd(cmd string) bool {
 	case "next":
 		m.queue.Next()
 		m.queue.CallOnCurrent(func(n *Notification) {
-			m.io.Writef("%+v\n", n)
+			m.io.Write(n.to_string())
 		})
 	case "previous":
 		m.queue.Prev()
 		m.queue.CallOnCurrent(func(n *Notification) {
-			m.io.Writef("%+v\n", n)
+			m.io.Write(n.to_string())
 		})
 	case "help":
 		m.io.Write(
