@@ -10,6 +10,7 @@ import (
 
 // The model links together dbus and IO interaction into one entry point.
 type Model struct {
+	conf  Config
 	io    Io
 	bus   dbus.SessionConn
 	queue NotifQueue
@@ -78,7 +79,7 @@ func (m *Model) CmdLoop() {
 func (m *Model) Notify(n Notification) {
 	m.queue.Push(&n)
 	m.queue.CallOnCurrent(func(n *Notification) {
-		m.io.Write(n.to_string())
+		m.io.Write(m.conf.Formatter(n))
 	})
 }
 
@@ -113,12 +114,12 @@ func (m *Model) performCmd(cmd string) bool {
 	case "next":
 		m.queue.Next()
 		m.queue.CallOnCurrent(func(n *Notification) {
-			m.io.Write(n.to_string())
+			m.io.Write(m.conf.Formatter(n))
 		})
 	case "previous":
 		m.queue.Prev()
 		m.queue.CallOnCurrent(func(n *Notification) {
-			m.io.Write(n.to_string())
+			m.io.Write(m.conf.Formatter(n))
 		})
 	case "help":
 		m.io.Write(
