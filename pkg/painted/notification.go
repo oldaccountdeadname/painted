@@ -10,5 +10,6 @@ type Formatter func(*Notification) string
 type Notification struct {
 	OriginApp string
 	Summary   string
+	Body      string
 	Id        uint32
 }

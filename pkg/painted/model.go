@@ -55,6 +55,7 @@ func (m *Model) CmdLoop() {
 	cmd_trie.Insert([]rune("clear"))
 	cmd_trie.Insert([]rune("next"))
 	cmd_trie.Insert([]rune("previous"))
+	cmd_trie.Insert([]rune("expand"))
 	cmd_trie.Insert([]rune("help"))
 
 	next_line := m.io.Lines()
@@ -121,6 +122,10 @@ func (m *Model) performCmd(cmd string) bool {
 		m.queue.CallOnCurrent(func(n *Notification) {
 			m.io.Write(m.conf.Formatter(n))
 		})
+	case "expand":
+		m.queue.CallOnCurrent(func(n *Notification) {
+			m.io.Writef("%s\n", n.Body)
+		})
 	case "help":
 		m.io.Write(
 			"command should be: exit | clear | next | previous | help\n",
@@ -139,7 +144,7 @@ func (l *listener) GetServerInformation() (
 }
 
 func (l *listener) GetCapabilities() ([]string, *dbus.Error) {
-	return []string{"persistence"}, nil
+	return []string{"persistence", "body"}, nil
 }
 
 func (l *listener) Notify(
@@ -155,6 +160,7 @@ func (l *listener) Notify(
 	notif := Notification{
 		OriginApp: app_name,
 		Summary:   summary,
+		Body:      body,
 		Id:        replaces_id,
 	}
 
