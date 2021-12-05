@@ -65,7 +65,7 @@ implement:
   - [x] Command matching by prefix (i.e., only `pr` to activate `previous` so
         long as no other command begins with `pr`)
   - [ ] notification format strings
-  - [ ] body text (maybe with an `expand` command)
+  - [x] body text
 - Additional: everything that would be nice to have, but not actually necessary
   as part of a notification daemon:
   - [ ] Do not disturb mode (would require some somewhat major restructuring)
