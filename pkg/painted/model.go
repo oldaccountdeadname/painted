@@ -45,10 +45,6 @@ func (m *Model) registerIface(listener *listener) error {
 // Assuming a properly set up Io member, read and process all input commands as
 // they arise (irrespective of EOF). This is blocking until the exit command is
 // sent.
-//
-// TODO: extract this into a goroutine managed by a channel which is a member of
-// this struct. Then performCmd may *actually perform the command* by sending
-// any IO changes (exit) across that channel.
 func (m *Model) CmdLoop() {
 	var cmd_trie trie.Trie
 	cmd_trie.Insert([]rune("exit"))
