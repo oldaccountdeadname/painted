@@ -118,7 +118,7 @@ func (a *Args) Make() (Exec, error) {
 		} else {
 			return Model{
 				Config{func(n *Notification) string {
-					return fmt.Sprintf("%+v\n", n)
+					return n.Format(`[%o] %s`)
 				}},
 				Io{
 					Reader{reader, a.Input},
