@@ -140,7 +140,7 @@ func (m *Model) performCmd(cmd string) bool {
 func (l *listener) GetServerInformation() (
 	string, string, string, string, *dbus.Error,
 ) {
-	return "painted", "none", "v0.1.0", "v1.2", nil
+	return "painted", "none", "v0.1.1", "v1.2", nil
 }
 
 func (l *listener) GetCapabilities() ([]string, *dbus.Error) {
