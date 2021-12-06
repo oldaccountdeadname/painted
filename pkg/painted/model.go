@@ -52,6 +52,7 @@ func (m *Model) CmdLoop() {
 	cmd_trie.Insert([]rune("next"))
 	cmd_trie.Insert([]rune("previous"))
 	cmd_trie.Insert([]rune("expand"))
+	cmd_trie.Insert([]rune("summarize"))
 	cmd_trie.Insert([]rune("help"))
 
 	next_line := m.io.Lines()
@@ -121,6 +122,10 @@ func (m *Model) performCmd(cmd string) bool {
 	case "expand":
 		m.queue.CallOnCurrent(func(n *Notification) {
 			m.io.Writef("%s\n", n.Body)
+		})
+	case "summarize":
+		m.queue.CallOnCurrent(func(n *Notification) {
+			m.io.Write(m.conf.Formatter(n))
 		})
 	case "help":
 		m.io.Write(
