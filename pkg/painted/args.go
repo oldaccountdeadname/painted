@@ -141,13 +141,11 @@ func (o Out) Exec() error {
 func (a *Args) apply(k *string, v *string) {
 	if *k == "help" {
 		a.Help = true
-	} else if v == nil {
-		return
 	}
 
-	if *k == "input" {
+	if *k == "input" && v != nil {
 		a.Input = *v
-	} else if *k == "output" {
+	} else if *k == "output" && v != nil {
 		a.Output = *v
 	}
 }
