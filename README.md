@@ -9,7 +9,7 @@ stdout). It aims to be a UNIX-ish replacement for standard notification daemons,
 primarily for usage with bars.
 
 Despite the name (a rough contraction of the initialism PTND, for Plain Text
-Notification Daemon), the scope of PTND is not limited to plain text: planned
+Notification Daemon), the scope of Painted is not limited to plain text: planned
 features include actions, sounds, and more. The goal is to achieve 'minimalism'
 through an unrestrictive design that facilitates scripting, run-time
 modification, and, of course, completeness.
@@ -82,19 +82,19 @@ This isn't supposed to be one of those highly minimal UNIX utilities, but it's
 also not supposed to be massive. That said, here's what I'm currently wanting to
 implement:
 
-- Basic: everything necessary before I tag a 1.0.0
+- Basic:
   - [x] Actually record notifications (obviously)
   - [x] Notification history and navigation
   - [x] persistence
   - [x] Command matching by prefix (i.e., only `pr` to activate `previous` so
         long as no other command begins with `pr`)
-  - [ ] notification format strings
+  - [x] notification format strings
   - [x] body text
-- Additional: everything that would be nice to have, but not actually necessary
-  as part of a notification daemon:
-  - [ ] Do not disturb mode (would require some somewhat major restructuring)
-  - [ ] Sounds
+- Additional (everything necessary for a 1.0.0):
   - [ ] Actions
+- Unneeded, but nice:
+  - [ ] Do not disturb mode
+  - [ ] Sounds
 
 [^1]: https://drewdevault.com/2020/06/06/Add-a-contrib-directory.html
 
