@@ -34,7 +34,8 @@ Available commands (those currently implemented shown checked) are:
 - [ ] remove (remove the notification from history: does not imply dismissal)
 - [x] previous (show the previous notification)
 - [x] next (show the next notification)
-- [x] expand (show body text for the currently selecetd notification)
+- [x] expand (show body text for the currently selected notification)
+- [x] summarize (show overview of the currently selected notification)
 - [ ] action \<N> (select the n\'th action)
 - [x] exit (close the server)
 
