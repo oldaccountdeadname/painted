@@ -16,7 +16,7 @@ import (
 var HelpMessage = Out{
 	`painted
 
-  usage: painted [-h|[--]help] | [-i|[--]input path] [-o|[--]output path]
+  usage: painted --help] | --input <path> --output <path>
 
 If a path ends in .sock, it is interpreted as a UNIX socket.
 `,
