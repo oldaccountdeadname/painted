@@ -16,9 +16,9 @@ import (
 var HelpMessage = Out{
 	`painted
 
-  usage: painted --help] | --input <path> --output <path>
+  usage: painted --help] | --input <path> --output <path> --config <path>
 
-If a path ends in .sock, it is interpreted as a UNIX socket.
+If input or output paths end in .sock, they're interpreted as a UNIX socket.
 `,
 }
 
@@ -27,12 +27,14 @@ var (
 		'h': "help",
 		'i': "input",
 		'o': "output",
+		'c': "config",
 	}
 
 	ArgRequiresVal = map[string]bool{
 		"help":   false,
 		"input":  true,
 		"output": true,
+		"config": true,
 	}
 )
 
@@ -44,6 +46,7 @@ type Args struct {
 	Help   bool
 	Input  string
 	Output string
+	Config string
 }
 
 type Out struct {
@@ -51,10 +54,12 @@ type Out struct {
 }
 
 func DefaultArgs() Args {
+	conf_location := os.Getenv("HOME") + "/.config/painted/conf.toml"
 	return Args{
 		false,
 		"/dev/stdin",
 		"/dev/stdout",
+		conf_location,
 	}
 }
 
@@ -116,10 +121,9 @@ func (a *Args) Make() (Exec, error) {
 		if e_msg != "" {
 			return nil, errors.New(e_msg)
 		} else {
+			conf, _ := MakeConfigFromFile(a.Config)
 			return Model{
-				Config{func(n *Notification) string {
-					return n.Format(`[%o] %s`)
-				}},
+				conf,
 				Io{
 					Reader{reader, a.Input},
 					Writer{writer, a.Output},
