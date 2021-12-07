@@ -108,6 +108,12 @@ func (m *Model) performCmd(cmd string) bool {
 	case "exit":
 		return true
 	case "clear":
+		m.bus.Emit(
+			"/org/freedesktop/notifications",
+			"org.freedesktop.Notifications.NotificationClosed",
+			m.queue.Get().Id,
+			uint32(2),
+		)
 		m.io.Write("\n")
 	case "next":
 		m.queue.Next()

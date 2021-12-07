@@ -30,6 +30,14 @@ func (s *SessionConn) Export(obj interface{}, path string, iface string) error {
 	return s.Conn.Export(obj, dbus.ObjectPath(path), iface)
 }
 
+func (s *SessionConn) Emit(
+	path dbus.ObjectPath,
+	name string,
+	values ...interface{},
+) error {
+	return s.Conn.Emit(path, name, values...)
+}
+
 func (s *SessionConn) Close() {
 	s.Conn.Close()
 	s.Conn = nil

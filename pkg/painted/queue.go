@@ -7,6 +7,14 @@ type NotifQueue struct {
 	index int
 }
 
+func (n *NotifQueue) Get() *Notification {
+	if n.index+1 <= n.queue.Len() {
+		return n.queue.At(n.index).(*Notification)
+	} else {
+		return nil
+	}
+}
+
 func (n *NotifQueue) Next() {
 	if n.index > 0 {
 		n.index -= 1
