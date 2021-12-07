@@ -120,9 +120,7 @@ func (m *Model) performCmd(cmd string) bool {
 		m.queue.Prev()
 		m.summarizeNotif()
 	case "expand":
-		m.queue.CallOnCurrent(func(n *Notification) {
-			m.io.Writef("%s\n", n.Body)
-		})
+		m.expandNotif()
 	case "summarize":
 		m.summarizeNotif()
 	case "help":
@@ -139,6 +137,12 @@ func (m *Model) performCmd(cmd string) bool {
 func (m *Model) summarizeNotif() {
 	m.queue.CallOnCurrent(func(n *Notification) {
 		m.io.Write(m.conf.SummaryFormatter(n))
+	})
+}
+
+func (m *Model) expandNotif() {
+	m.queue.CallOnCurrent(func(n *Notification) {
+		m.io.Write(m.conf.ExpandedFormatter(n))
 	})
 }
 

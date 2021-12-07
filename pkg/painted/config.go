@@ -3,20 +3,34 @@ package painted
 import "github.com/BurntSushi/toml"
 
 type Config struct {
-	SummaryFormatter Formatter
+	SummaryFormatter  Formatter
+	ExpandedFormatter Formatter
 }
 
 type configRaw struct {
-	NotifSummaryFormat string `toml:"notif_format"`
+	Formats notifFormats
+}
+
+type notifFormats struct {
+	Summary  string
+	Expanded string
 }
 
 func MakeConfigFromFile(path string) (Config, error) {
 	conf := configRaw{
-		`[%o] %s`,
+		notifFormats{
+			`[%o] %s`,
+			`%b`,
+		},
 	}
 
 	_, err := toml.DecodeFile(path, &conf)
-	return Config{func(n *Notification) string {
-		return n.Format(conf.NotifSummaryFormat)
-	}}, err
+	return Config{
+		func(n *Notification) string {
+			return n.Format(conf.Formats.Summary)
+		},
+		func(n *Notification) string {
+			return n.Format(conf.Formats.Expanded)
+		},
+	}, err
 }
