@@ -117,22 +117,16 @@ func (m *Model) performCmd(cmd string) bool {
 		m.io.Write("\n")
 	case "next":
 		m.queue.Next()
-		m.queue.CallOnCurrent(func(n *Notification) {
-			m.io.Write(m.conf.Formatter(n))
-		})
+		m.summarizeNotif()
 	case "previous":
 		m.queue.Prev()
-		m.queue.CallOnCurrent(func(n *Notification) {
-			m.io.Write(m.conf.Formatter(n))
-		})
+		m.summarizeNotif()
 	case "expand":
 		m.queue.CallOnCurrent(func(n *Notification) {
 			m.io.Writef("%s\n", n.Body)
 		})
 	case "summarize":
-		m.queue.CallOnCurrent(func(n *Notification) {
-			m.io.Write(m.conf.Formatter(n))
-		})
+		m.summarizeNotif()
 	case "help":
 		m.io.Write(
 			"command should be: exit | clear | next | previous | help\n",
@@ -142,6 +136,12 @@ func (m *Model) performCmd(cmd string) bool {
 	}
 
 	return false
+}
+
+func (m *Model) summarizeNotif() {
+	m.queue.CallOnCurrent(func(n *Notification) {
+		m.io.Write(m.conf.Formatter(n))
+	})
 }
 
 func (l *listener) GetServerInformation() (
