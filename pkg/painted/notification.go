@@ -39,6 +39,8 @@ func (n *Notification) Format(f string) string {
 			buf.WriteRune(c)
 		} else if state == 1 {
 			switch c {
+			case 'b':
+				nf.WriteString(n.Body)
 			case 'o':
 				nf.WriteString(n.OriginApp)
 			case 's':
