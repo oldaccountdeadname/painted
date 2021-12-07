@@ -20,7 +20,7 @@ func MakeConfigFromFile(path string) (Config, error) {
 	conf := configRaw{
 		notifFormats{
 			`[%o] %s`,
-			`%b`,
+			`%b | %a`,
 		},
 	}
 

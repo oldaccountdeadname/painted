@@ -40,6 +40,13 @@ func (n *Notification) Format(f string) string {
 			buf.WriteRune(c)
 		} else if state == 1 {
 			switch c {
+			case 'a':
+				// this formatting is a bit blunt, but it works
+				action_names := make([]string, 0, len(n.Actions))
+				for k, _ := range n.Actions {
+					action_names = append(action_names, k)
+				}
+				nf.WriteString(fmt.Sprintf("%v", action_names))
 			case 'b':
 				nf.WriteString(n.Body)
 			case 'o':
@@ -55,6 +62,5 @@ func (n *Notification) Format(f string) string {
 	}
 
 	nf.WriteRune('\n')
-
 	return nf.String()
 }
