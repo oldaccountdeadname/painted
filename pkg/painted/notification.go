@@ -17,6 +17,7 @@ type Notification struct {
 	Summary   string
 	Body      string
 	Id        uint32
+	Actions   map[string]string
 }
 
 func (n *Notification) Format(f string) string {

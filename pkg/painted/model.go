@@ -153,7 +153,7 @@ func (l *listener) GetServerInformation() (
 }
 
 func (l *listener) GetCapabilities() ([]string, *dbus.Error) {
-	return []string{"persistence", "body"}, nil
+	return []string{"actions", "body", "persistence"}, nil
 }
 
 func (l *listener) Notify(
@@ -171,6 +171,7 @@ func (l *listener) Notify(
 		Summary:   summary,
 		Body:      body,
 		Id:        replaces_id,
+		Actions:   actionsFromDbus(actions),
 	}
 
 	if notif.Id == 0 { // test if we need to give this an ID
@@ -180,4 +181,25 @@ func (l *listener) Notify(
 	l.Recieve(notif)
 
 	return notif.Id, nil
+}
+
+// See notification spec v1.2 table 6, row 6
+func actionsFromDbus(actions []interface{}) map[string]string {
+	sr_actions := make([]string, 0, len(actions))
+	id_actions := make([]string, 0, len(actions))
+	mp_actions := make(map[string]string)
+
+	for i := 0; i < len(actions); i += 2 {
+		id_actions = append(id_actions, actions[i].(string))
+	}
+
+	for i := 1; i < len(actions); i += 2 {
+		sr_actions = append(sr_actions, actions[i].(string))
+	}
+
+	for i, _ := range sr_actions {
+		mp_actions[sr_actions[i]] = id_actions[i]
+	}
+
+	return mp_actions
 }
