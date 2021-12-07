@@ -49,27 +49,27 @@ If the input file ends in `.sock`, painted connects to it as a client on a UNIX
 socket.
 
 ### Configuring
-You can write a config file at `~/.config/painted/conf.toml`. This is toml, and
-looks like this:
+Painted looks for a config file at `~/.config/painted/conf.toml`. This is toml,
+and stores the following options:
 
 ```toml
-notif_format = <format_str>
+[formats]
+summary  = "[%o] %s"
+expanded = "%b | %a"
 ```
 
 A format string is just a normal string, with the exception that a % sign
 followed by a specific character will insert information about the notification.
 A % sequence may be one of the following:
 
-+ `%o`: the app that *o*riginated the notification.
++ `%b`: the body text of the notification
++ `%a`: any actions that may be performed
 + `%i`: the ID of the notification.
++ `%o`: the app that *o*riginated the notification.
 + `%s`: the summary text of the notification.
 
-Thus, you can have a format string that looks like this (this is in fact the
-default format string):
-
-```
-[%o] %s
-```
+The above format sequences may be interleaved with anything valid in a standard
+toml string.
 
 ### Some Specific Config Files
 Check the contrib/ folder for some config files that invoke painted in a way
