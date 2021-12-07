@@ -76,9 +76,7 @@ func (m *Model) CmdLoop() {
 
 func (m *Model) Notify(n Notification) {
 	m.queue.Push(&n)
-	m.queue.CallOnCurrent(func(n *Notification) {
-		m.io.Write(m.conf.Formatter(n))
-	})
+	m.summarizeNotif()
 }
 
 // Connect to the bus, register the interface, launch the notif loop and the
@@ -140,7 +138,7 @@ func (m *Model) performCmd(cmd string) bool {
 
 func (m *Model) summarizeNotif() {
 	m.queue.CallOnCurrent(func(n *Notification) {
-		m.io.Write(m.conf.Formatter(n))
+		m.io.Write(m.conf.SummaryFormatter(n))
 	})
 }
 

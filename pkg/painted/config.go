@@ -3,7 +3,7 @@ package painted
 import "github.com/BurntSushi/toml"
 
 type Config struct {
-	Formatter Formatter
+	SummaryFormatter Formatter
 }
 
 type configRaw struct {
