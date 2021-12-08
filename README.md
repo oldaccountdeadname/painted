@@ -92,6 +92,7 @@ implement:
   - [x] body text
 - Additional (everything necessary for a 1.0.0):
   - [ ] Actions
+  - [ ] Docs
 - Unneeded, but nice:
   - [ ] Do not disturb mode
   - [ ] Sounds
