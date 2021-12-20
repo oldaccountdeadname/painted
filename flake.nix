@@ -6,7 +6,7 @@
     in {
       defaultPackage.x86_64-linux = pkgs.buildGoModule {
         name = "painted";
-        version = "v0.1.1";
+        version = "v0.1.2";
 
         src = builtins.filterSource
           (path: type: baseNameOf path != "contrib")
