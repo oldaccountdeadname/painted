@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"io"
+	"unsafe"
 
 	"golang.org/x/sys/unix"
 )
@@ -56,13 +57,19 @@ func (i *Io) Writef(f string, v ...interface{}) {
 
 /* misc helpers */
 
-// Use poll(2) to watch a given file path and block until a read is available.
+// Use inotify to watch a given file path and `read` (block until an event
+// occurs). See inotify(2). This is a linux-specific syscall.
 //
 // Errors are ignored.
 func blockUntilModify(f string) {
-	fd, _ := unix.Open(f, unix.O_RDONLY, 0)
-	defer unix.Close(fd)
+	nf, err := unix.InotifyInit()
 
-	fds := []unix.PollFd{{Fd: int32(fd), Events: unix.POLLIN}}
-	unix.Poll(fds, -1)
+	if err != nil {
+		return
+	}
+
+	unix.InotifyAddWatch(nf, f, unix.IN_MODIFY)
+
+	ev := make([]byte, unsafe.Sizeof(unix.InotifyEvent{}))
+	unix.Read(nf, ev)
 }
