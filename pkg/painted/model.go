@@ -125,7 +125,7 @@ func (m *Model) performCmd(cmd string) bool {
 		m.summarizeNotif()
 	case "help":
 		m.io.Write(
-			"command should be: exit | clear | next | previous | help\n",
+			"command should be: exit | expand | clear | next | previous | help\n",
 		)
 	default:
 		m.io.Writef("%s not matched with any valid commands: see `help`.\n", cmd)
