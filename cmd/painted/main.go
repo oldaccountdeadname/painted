@@ -2,15 +2,14 @@ package main
 
 import (
 	"log"
-	"os"
 
 	"github.com/lincolnauster/painted/pkg/painted"
 )
 
 func main() {
-	args := painted.DefaultArgs()
+	args, err := painted.FromArgs()
 
-	if err := args.Fill(os.Args[1:]); err != nil {
+	if err != nil {
 		log.Fatal(err)
 	}
 

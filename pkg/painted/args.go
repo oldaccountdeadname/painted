@@ -53,7 +53,17 @@ type Out struct {
 	msg string
 }
 
-func DefaultArgs() Args {
+func FromArgs() (*Args, error) {
+	args := defaultArgs()
+
+	if err := args.fill(os.Args[1:]); err != nil {
+		return nil, err
+	}
+
+	return &args, nil
+}
+
+func defaultArgs() Args {
 	conf_location := os.Getenv("HOME") + "/.config/painted/conf.toml"
 	return Args{
 		false,
@@ -64,7 +74,7 @@ func DefaultArgs() Args {
 }
 
 // Initialize `self` with a list of arguments. Errors returned are fatal.
-func (a *Args) Fill(args_s []string) error {
+func (a *Args) fill(args_s []string) error {
 	for i := 0; i < len(args_s); i++ {
 		var val string
 		key, m := argToOpt(args_s[i])
