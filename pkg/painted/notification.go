@@ -2,6 +2,7 @@ package painted
 
 import (
 	"fmt"
+	"log"
 	"strings"
 )
 
@@ -58,6 +59,13 @@ func (n *Notification) Format(f string) string {
 				nf.WriteString(n.Summary)
 			case 'i':
 				nf.WriteString(fmt.Sprintf("%d", n.Id))
+			default:
+				// we encountered an unknown format control
+				// char; render it literally and log that it was
+				// unknown.
+				nf.WriteRune('%')
+				nf.WriteRune(c)
+				log.Printf("Encountered unknown format character %c", c)
 			}
 
 			state = 0
