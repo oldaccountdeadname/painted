@@ -20,6 +20,14 @@ type Notification struct {
 	Actions   map[string]string
 }
 
+func (n *Notification) StringActions() string {
+	action_names := make([]string, 0, len(n.Actions))
+	for k, _ := range n.Actions {
+		action_names = append(action_names, k)
+	}
+	return fmt.Sprintf("%v", action_names)
+}
+
 func (n *Notification) Format(f string) string {
 	var buf strings.Builder
 	var nf strings.Builder
@@ -41,12 +49,7 @@ func (n *Notification) Format(f string) string {
 		} else if state == 1 {
 			switch c {
 			case 'a':
-				// this formatting is a bit blunt, but it works
-				action_names := make([]string, 0, len(n.Actions))
-				for k, _ := range n.Actions {
-					action_names = append(action_names, k)
-				}
-				nf.WriteString(fmt.Sprintf("%v", action_names))
+				nf.WriteString(n.StringActions())
 			case 'b':
 				nf.WriteString(n.Body)
 			case 'o':
