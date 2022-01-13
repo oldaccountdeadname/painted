@@ -78,7 +78,11 @@ func (a *Args) Make() (Exec, error) {
 	if e_msg != "" {
 		return nil, errors.New(e_msg)
 	} else {
-		conf, _ := MakeConfigFromFile(a.Config)
+		conf, err := MakeConfigFromFile(a.Config)
+		if err != nil {
+			return nil, err
+		}
+
 		return Model{
 			conf,
 			Io{
