@@ -35,3 +35,27 @@ indent it with one tab, and precede it with a newline:
 
 If text follows a code block, precede it with a blank line.
 ```
+
+## Updating Dependencies
+Painted has two build systems, Go and Nix. Nix dependencies are managed through
+Flakes, and this repo has a workflow to update them weekly. Assuming no breaking
+compiler changes, the PRs created by that workflow can be merged with minimal
+checks. Go dependencies are a bit more complicated, despite the relatively small
+number of them. Dependabot updates them when needed, but the CI pipelines will
+always fail. Why? The pipelines don't build through Go, they build through Nix.
+Nix is deterministic, and, if the vendorSha256 isn't what Nix expects (as
+happens when dependencies change) the build will fail.
+
+The procedure to fix, assuming dependency updates don't break anything extra, is
+as follows:
++ Update the venderSha256 (set it to pkgs.lib.fakeSha256 and copy the output of
+  the failing build)
++ Make sure `nix build` works.
++ Ammend dependabot's commit to contain it.
++ Mark yourself as the author (you're the one who updated the hash).
++ Replace the first line of the commit message with `bump $dep: $oldVer ->
+  $newVer`.
++ Note that you updated the sha.
++ Replace the last line's `Signed-off-by` with `co-authored-by` to indicate that
+  this is dependabot's work, too.
++ Push.
