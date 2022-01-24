@@ -149,7 +149,7 @@ func (m *Model) expandNotif() {
 func (l *listener) GetServerInformation() (
 	string, string, string, string, *dbus.Error,
 ) {
-	return "painted", "none", "v0.1.2", "v1.2", nil
+	return "painted", "none", "v0.1.3", "v1.2", nil
 }
 
 func (l *listener) GetCapabilities() ([]string, *dbus.Error) {
