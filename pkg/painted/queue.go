@@ -33,6 +33,8 @@ func (n *NotifQueue) Push(x *Notification) {
 }
 
 func (n *NotifQueue) CallOnCurrent(callback func(*Notification)) {
-	x := n.queue.At(n.index).(*Notification)
-	callback(x)
+	if n.queue.Len() > 0 {
+		x := n.queue.At(n.index).(*Notification)
+		callback(x)
+	}
 }
