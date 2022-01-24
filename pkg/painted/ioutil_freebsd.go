@@ -1,4 +1,4 @@
-//+build freebsd
+//+build freebsd || openbsd
 
 package painted
 
@@ -57,8 +57,7 @@ func (i *Io) Writef(f string, v ...interface{}) {
 
 /* misc helpers */
 
-// Use kqueue to watch a given file path and `read` (block until an event
-// occurs). See inotify(2). This is a linux-specific syscall.
+// Use kqueue to watch a given file path and block until an event occurs.
 //
 // Errors are ignored.
 func blockUntilModify(f string) {
