@@ -1,4 +1,4 @@
-//+build freebsd || openbsd
+//+build freebsd openbsd
 
 package painted
 
