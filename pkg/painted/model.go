@@ -49,6 +49,7 @@ func (m *Model) CmdLoop() {
 	var cmd_trie trie.Trie
 	cmd_trie.Insert([]rune("exit"))
 	cmd_trie.Insert([]rune("clear"))
+	cmd_trie.Insert([]rune("remove"))
 	cmd_trie.Insert([]rune("next"))
 	cmd_trie.Insert([]rune("previous"))
 	cmd_trie.Insert([]rune("expand"))
@@ -113,6 +114,9 @@ func (m *Model) performCmd(cmd string) bool {
 			uint32(2),
 		)
 		m.io.Write("\n")
+	case "remove":
+		m.performCmd("clear")
+		m.queue.Remove()
 	case "next":
 		m.queue.Next()
 		m.summarizeNotif()

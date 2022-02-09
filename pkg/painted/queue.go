@@ -15,6 +15,14 @@ func (n *NotifQueue) Get() *Notification {
 	}
 }
 
+func (n *NotifQueue) Remove() *Notification {
+	if n.queue.Len() > 0 {
+		return n.queue.PopFront().(*Notification)
+	} else {
+		return nil
+	}
+}
+
 func (n *NotifQueue) Next() {
 	if n.index > 0 {
 		n.index -= 1
