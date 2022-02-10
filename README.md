@@ -20,56 +20,8 @@ If you don't have Flakes and/or Nix, `go build ./cmd/painted` will probably
 work, too, though this isn't :sparkles: officially supported :sparkles:.
 
 ## Usage
-
-### In General
-With no other notification daemons running, run the server (with the command
-`painted`). If you send a notification with `notify-send`, you should see it
-show up in the terminal window where you've run painted.
-
-With no arguments, painted defaults to reading input commands from stdin.
-Available commands (those currently implemented shown checked) are:
-
-- [x] help (list commands).
-- [x] clear (print a blank line to hide the notification)
-- [x] remove (remove the notification from history)
-- [x] previous (show the previous notification)
-- [x] next (show the next notification)
-- [x] expand (show body text for the currently selected notification)
-- [x] summarize (show overview of the currently selected notification)
-- [ ] action \<N> (select the n\'th action)
-- [x] exit (close the server)
-
-You may specify the input and output file anywhere, including /dev/stdin
-(default in) and /dev/stdout (default out). If you want to control it from a
-different file, specify it. For instance, in bars, you wouldn't want to have
-input be given over stdin because there is no (convenient) way to access a
-process's stdin without an interactive shell.
-
-If the input file ends in `.sock`, painted connects to it as a client on a UNIX
-socket.
-
-### Configuring
-Painted looks for a config file at `~/.config/painted/conf.toml`. This is toml,
-and stores the following options:
-
-```toml
-[formats]
-summary  = "[%o] %s"
-expanded = "%b | %a"
-```
-
-A format string is just a normal string, with the exception that a % sign
-followed by a specific character will insert information about the notification.
-A % sequence may be one of the following:
-
-+ `%b`: the body text of the notification
-+ `%a`: any actions that may be performed
-+ `%i`: the ID of the notification.
-+ `%o`: the app that *o*riginated the notification.
-+ `%s`: the summary text of the notification.
-
-The above format sequences may be interleaved with anything valid in a standard
-toml string.
+See painted(1). (If you've just got the source checked out, you can run `man
+./painted.1` to view the equivalent man page.)
 
 ### Some Specific Config Files
 Check the contrib/ folder for some config files that invoke painted in a way
@@ -93,6 +45,7 @@ implement:
 - Additional (everything necessary for a 1.0.0):
   - [ ] Actions
   - [ ] Docs
+  - [ ] Man page packaged in Nix.
 - Unneeded, but nice:
   - [ ] Do not disturb mode
   - [ ] Sounds
