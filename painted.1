@@ -1,0 +1,113 @@
+.TH painted 1
+.SH NAME
+painted \- a command-line notification daemon
+.SH SYNOPSIS
+.B painted
+[\fB\-input\fR \fIresource\fR]
+[\fB\-output\fR \fIresource\fR]
+[\fB\-config\fR \fIfile\fR]
+.SH DESCRIPTION
+Painted attaches itself to a dbus session and listens to notifications, logging
+them to an output sink, potentially in response to commands from an input
+source.
+.PP
+The daemon maintains a queue of notifications. When a notification is sent by
+some program (for instance, a chat application), it is enqueued to the end of
+Painted's queue and automatically selected. When a notification is selected in
+the queue, it is written to the output sink in the format specified by the
+configuration file. The notification queue may be modified by a number of input
+commands; see the
+.B COMMANDS
+section for a complete list.
+.PP
+Note that a dbus daemon must be running and accessible for Painted to be able to
+work.
+.SH OPTIONS
+.TP
+.B \-input \fIresource\fR
+An input source to read commands from (see
+.B COMMANDS
+for a list of valid commands). If the specifed file does not exist, Painted will
+create it. If unspecified, Painted uses standard input.
+.TP
+.B \-output \fIresource\fR
+An output source to write notifications to. If the specified file does not
+exist, Painted will creat it. If unspecified, painted uses standard output.
+.TP
+.B \-config \fIfile\fR
+The config file to read. By default, $HOME/.config/painted/conf.toml is read if
+it exists.
+.PP
+Note that when a \fIresource\fR is expected (as opposed to a \fIfile\fR),
+Painted will treat it as a UNIX socket if the filename ends with ".sock".
+.SH COMMANDS
+Painted accepts a number of commands written line-by-line to its input file.
+These commands control what output is written. Note that commands are matched
+via prefix, so, for instance, writing \fBexp\fR triggers the \fBexpand\fR
+command, but \fBex\fR would not be recognized, as its meaning is ambigous (could
+be either \fBexpand\fR or \fBexit\fR).
+.TP
+.B exit
+Terminate the daemon.
+.TP
+.B clear
+Hide the current notification (write a LF character to the output sink).
+.TP
+.B remove
+Remove the notification from the queue. This implies \fBclear\fR.
+.TP
+.B next
+Select the next notification from the queue. This has no effect if the queue is
+empty or the last notification is already selected.
+.TP
+.B previous
+Select the previous notification from the queue. This has no effect if the queue
+is empty or the first notification is already selected.
+.TP
+.B expand
+Write the expanded view of the currently selected notification to the output
+sink.
+.TP
+.B summarize
+Write the summary of a notification to the output sink. When a notification is
+received, this is automatically called after selection.
+.TP
+.B help
+List all valid commands.
+.SH CONFIGURATION
+The configuration file (by default located at ~/.config/painted/conf.toml, but
+may be overriden with the \fB-config\fR argument) is a TOML-formatted plain text
+file with the following format and options:
+.RS
+[formats]
+.br
+summary = "..."
+.br
+expanded = "..."
+.RE
+.PP
+Both \fBsummary\fR and \fBexpanded\fR of the \fBformats\fR section take a
+notification format string. In a similar manner to
+.BR printf (3)
+format strings, notification format strings are a string of characters with
+optional escape sequences beginning with the % character. The following escape
+sequences are supported.
+.TP
+.B %a
+The actions that may be performed on the notification.
+.TP
+.B %b
+The body text of the notificatoin.
+.TP
+.B %o
+The origin app of the notification.
+.TP
+.B %s
+The summary text of the notification.
+.TP
+.B %i
+The ID of the notification, as assigned by Painted. This may be useful for
+debugging, but not much more.
+.PP
+If an unknown %-escape sequence is encountered, it's used literally and a
+warning is logged to stderr.
