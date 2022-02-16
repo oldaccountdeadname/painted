@@ -4,8 +4,8 @@
   outputs = { self, nixpkgs }:
     let pkgs = import nixpkgs { system = "x86_64-linux"; };
     in {
-      defaultPackage.x86_64-linux = pkgs.buildGoModule {
-        name = "painted";
+      defaultPackage.x86_64-linux = let inner = pkgs.buildGoModule {
+        name = "inner";
         version = "v0.1.3";
 
         src = builtins.filterSource
@@ -13,6 +13,22 @@
           ./.;
 
         vendorSha256 = "sha256-8pkdIMgXduxrhB4LdEOyX81PGA6ya5b1VCJStptqmd0=";
+      }; in pkgs.stdenv.mkDerivation {
+        name = "painted";
+        version = "v0.1.3";
+
+        src = ./.;
+
+        installPhase = ''
+          mkdir -p $out
+          cp -r ${inner}/* $out/
+
+          mkdir -p $out/share/man/man1
+          cp painted.1 $out/share/man/man1
+        '';
+
+        dontBuild = true;
+        dontConfigure = true;
       };
 
       devShell.x86_64-linux = pkgs.mkShell {
