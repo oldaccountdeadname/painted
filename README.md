@@ -45,7 +45,7 @@ implement:
 - Additional (everything necessary for a 1.0.0):
   - [ ] Actions
   - [ ] Docs
-  - [ ] Man page packaged in Nix.
+  - [x] Man page packaged in Nix.
 - Unneeded, but nice:
   - [ ] Do not disturb mode
   - [ ] Sounds
