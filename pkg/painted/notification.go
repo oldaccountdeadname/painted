@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"log"
 	"strings"
+
+	"github.com/lincolnauster/painted/pkg/dbus"
 )
 
 type Formatter func(*Notification) string
@@ -19,6 +21,17 @@ type Notification struct {
 	Body      string
 	Id        uint32
 	Actions   map[string]string
+}
+
+func (n *Notification) Dismiss() {
+	if n != nil {
+		dbus.Emit(
+			"/org/freedesktop/notifications",
+			"org.freedesktop.Notifications.NotificationClosed",
+			n.Id,
+			uint32(2),
+		)
+	}
 }
 
 func (n *Notification) StringActions() string {

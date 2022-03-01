@@ -106,19 +106,11 @@ func (m *Model) performCmd(cmd string) bool {
 	case "exit":
 		return true
 	case "clear":
-		if n := m.queue.Get(); n != nil {
-			dbus.Emit(
-				"/org/freedesktop/notifications",
-				"org.freedesktop.Notifications.NotificationClosed",
-				n.Id,
-				uint32(2),
-			)
-		}
-
+		m.queue.Get().Dismiss()
 		m.io.Write("\n")
 	case "remove":
 		m.performCmd("clear")
-		m.queue.Remove()
+		m.queue.Remove().Dismiss()
 	case "next":
 		m.queue.Next()
 		m.summarizeNotif()
