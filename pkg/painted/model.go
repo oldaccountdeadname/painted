@@ -114,8 +114,9 @@ func (m *Model) performCmd(cmd string) bool {
 				n.Id,
 				uint32(2),
 			)
-			m.io.Write("\n")
 		}
+
+		m.io.Write("\n")
 	case "remove":
 		m.performCmd("clear")
 		m.queue.Remove()
