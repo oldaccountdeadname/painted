@@ -10,8 +10,6 @@ import (
 	"strings"
 
 	"github.com/gammazero/deque"
-
-	"github.com/lincolnauster/painted/pkg/dbus"
 )
 
 type Exec interface {
@@ -89,7 +87,6 @@ func (a *Args) Make() (Exec, error) {
 				Reader{reader, a.Input},
 				Writer{writer, a.Output},
 			},
-			dbus.SessionConn{},
 			NotifQueue{*deque.New(), 0},
 		}, nil
 	}

@@ -12,7 +12,6 @@ import (
 type Model struct {
 	conf  Config
 	io    Io
-	bus   dbus.SessionConn
 	queue NotifQueue
 }
 
@@ -25,7 +24,7 @@ type listener struct {
 }
 
 func (m *Model) takeName() error {
-	if !m.bus.TakeName("org.freedesktop.Notifications") {
+	if !dbus.TakeName("org.freedesktop.Notifications") {
 		return errors.New(
 			`Can't take org.freedesktop.Notifications. Is another notif daemon running?`,
 		)
@@ -35,7 +34,7 @@ func (m *Model) takeName() error {
 }
 
 func (m *Model) registerIface(listener *listener) error {
-	return m.bus.Export(
+	return dbus.Export(
 		listener,
 		"/org/freedesktop/Notifications",
 		"org.freedesktop.Notifications",
@@ -83,7 +82,7 @@ func (m *Model) Notify(n Notification) {
 // Connect to the bus, register the interface, launch the notif loop and the
 // input loop (concurrently).
 func (m Model) Exec() error {
-	defer m.bus.Close()
+	defer dbus.Close()
 
 	if err := m.takeName(); err != nil {
 		return err
@@ -108,7 +107,7 @@ func (m *Model) performCmd(cmd string) bool {
 		return true
 	case "clear":
 		if n := m.queue.Get(); n != nil {
-			m.bus.Emit(
+			dbus.Emit(
 				"/org/freedesktop/notifications",
 				"org.freedesktop.Notifications.NotificationClosed",
 				n.Id,

@@ -4,9 +4,8 @@ import "github.com/godbus/dbus/v5"
 
 // This wraps the go dbus lib and provides an idiomatic interface. It abstracts
 // over things like connection state by providing a lazy API.
-type SessionConn struct {
-	conn *dbus.Conn
-}
+
+var conn *dbus.Conn
 
 type Error = dbus.Error
 
@@ -15,10 +14,10 @@ type Error = dbus.Error
 // will not allow replacement itself.
 //
 // Names are automatically returned to dbus when the connection is closed.
-func (s *SessionConn) TakeName(name string) bool {
-	s.lazyConnect()
+func TakeName(name string) bool {
+	lazyConnect()
 
-	resp, err := s.conn.RequestName(
+	resp, err := conn.RequestName(
 		name,
 		dbus.NameFlagReplaceExisting|dbus.NameFlagDoNotQueue,
 	)
@@ -26,33 +25,29 @@ func (s *SessionConn) TakeName(name string) bool {
 	return err == nil && resp == dbus.RequestNameReplyPrimaryOwner
 }
 
-func (s *SessionConn) Export(obj interface{}, path string, iface string) error {
-	return s.conn.Export(obj, dbus.ObjectPath(path), iface)
+func Export(obj interface{}, path string, iface string) error {
+	return conn.Export(obj, dbus.ObjectPath(path), iface)
 }
 
-func (s *SessionConn) Emit(
+func Emit(
 	path dbus.ObjectPath,
 	name string,
 	values ...interface{},
 ) error {
-	return s.conn.Emit(path, name, values...)
+	return conn.Emit(path, name, values...)
 }
 
-func (s *SessionConn) Close() {
-	s.conn.Close()
-	s.conn = nil
+func Close() {
+	conn.Close()
+	conn = nil
 }
 
-func (s *SessionConn) lazyConnect() error {
-	var conn *dbus.Conn
+func lazyConnect() error {
 	var err error
-	if s.conn == nil {
+	if conn == nil {
 		conn, err = dbus.ConnectSessionBus()
+		return err
 	} else {
-		conn = s.conn
-		err = nil
+		return nil
 	}
-
-	s.conn = conn
-	return err
 }
